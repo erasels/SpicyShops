@@ -1,0 +1,11 @@
+{
+  "modid": "SacredBarkPlus",
+  "name": "SacredBarkPlus",
+  "author_list": ["erasels"],
+  "description": "Makes Sacred Bark interact with all potions.",
+  "version": "1.0.0",
+  "sts_version": "01-02-2019",
+  "mts_version": "3.8.3",
+  "dependencies": ["basemod"],
+  "update_json": ""
+}
