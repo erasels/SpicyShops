@@ -1,8 +1,8 @@
 {
-  "modid": "SacredBarkPlus",
-  "name": "SacredBarkPlus",
+  "modid": "BetterSilentStart",
+  "name": "Better Silent Start",
   "author_list": ["erasels"],
-  "description": "Makes Sacred Bark interact with all potions.",
+  "description": "Changes the Silent starter relic and deck to be less bad, I guess.",
   "version": "1.0.0",
   "sts_version": "01-02-2019",
   "mts_version": "3.8.3",

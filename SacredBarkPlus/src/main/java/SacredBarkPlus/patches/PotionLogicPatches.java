@@ -1,57 +1,140 @@
 package SacredBarkPlus.patches;
 
-import com.evacipated.cardcrawl.mod.hubris.relics.EmptyBottle;
+import com.badlogic.gdx.math.MathUtils;
 import com.evacipated.cardcrawl.modthespire.lib.*;
+import com.megacrit.cardcrawl.actions.common.DrawCardAction;
 import com.megacrit.cardcrawl.cards.DamageInfo;
 import com.megacrit.cardcrawl.characters.AbstractPlayer;
+import com.megacrit.cardcrawl.characters.TheSilent;
 import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
 import com.megacrit.cardcrawl.potions.AbstractPotion;
+import com.megacrit.cardcrawl.relics.AbstractRelic;
+import com.megacrit.cardcrawl.relics.RingOfTheSerpent;
 import com.megacrit.cardcrawl.relics.SacredBark;
+import com.megacrit.cardcrawl.relics.SnakeRing;
+import com.megacrit.cardcrawl.rooms.AbstractRoom;
 import com.megacrit.cardcrawl.ui.panels.PotionPopUp;
 import com.megacrit.cardcrawl.ui.panels.TopPanel;
-import javassist.CtBehavior;
+import javassist.*;
 
-import static SacredBarkPlus.SacredBarkPlus.affectedPotions;
-import static SacredBarkPlus.SacredBarkPlus.hasHubris;
+import java.util.ArrayList;
+
 
 public class PotionLogicPatches {
-    public static AbstractPotion potion;
-
-    private static void Do(AbstractPotion pot) {
-        if (!(hasHubris && AbstractDungeon.player.hasRelic(EmptyBottle.ID)) && AbstractDungeon.player.hasRelic(SacredBark.ID)) {
-            if (affectedPotions.contains(pot.ID)) {
-                int useCount = PotionUsePatches.PotionUseField.useCount.get(pot);
-                PotionUsePatches.PotionUseField.useCount.set(pot, --useCount);
-
-                if (useCount > 0) {
-                    potion = pot;
-                }
-            }
+    @SpirePatch(clz = TheSilent.class, method = "getStartingDeck")
+    public static class BigFuckSilent {
+        @SpirePostfixPatch
+        public static ArrayList<String> patch(ArrayList<String> __result, TheSilent __instance) {
+            __result.remove("Defend_G");
+            __result.remove("Strike_G");
+            return __result;
         }
     }
 
-    @SpirePatch(clz = AbstractPlayer.class, method = "damage")
-    public static class FairyPotion {
-        @SpireInsertPatch(locator = Locator.class, localvars = {"p"})
-        public static void Insert(AbstractPlayer __instance, DamageInfo info, AbstractPotion potion) {
-            Do(potion);
+    @SpirePatch(clz = SnakeRing.class, method = "atBattleStart")
+    public static class SnakeRing_FuckOriginalEffect {
+        @SpirePrefixPatch
+        public static SpireReturn patch(SnakeRing __instance) {
+            return SpireReturn.Return(null);
         }
     }
 
-    @SpirePatch(clz = PotionPopUp.class, method = "updateInput")
-    @SpirePatch(clz = PotionPopUp.class, method = "updateTargetMode")
-    public static class NormalPotions {
-        @SpireInsertPatch(locator = Locator.class, localvars = {"potion"})
-        public static void Insert(PotionPopUp __instance, AbstractPotion potion) {
-            Do(potion);
+    @SpirePatch(clz = SnakeRing.class, method = "getUpdatedDescription")
+    public static class SnakeRing_FuckOriginalDesc {
+        @SpirePostfixPatch
+        public static String patch(SnakeRing __instance) {
+            return "The first time you gain #yBlock each combat, gain #b6 #yBlock.";
         }
     }
 
-    private static class Locator extends SpireInsertLocator {
-        @Override
-        public int[] Locate(CtBehavior ctMethodToPatch) throws Exception {
-            Matcher finalMatcher = new Matcher.MethodCallMatcher(TopPanel.class, "destroyPotion");
-            return LineFinder.findInOrder(ctMethodToPatch, finalMatcher);
+    @SpirePatch(clz = SnakeRing.class, method = SpirePatch.CONSTRUCTOR)
+    public static class SnakeRing_NewEffect {
+        public static void Raw(CtBehavior ctMethodToPatch) throws NotFoundException, CannotCompileException {
+            CtClass ctClass = ctMethodToPatch.getDeclaringClass();
+            ClassPool pool = ctClass.getClassPool();
+            CtClass ctAbstractRoom = pool.get(AbstractRoom.class.getName());
+
+            CtMethod method = CtNewMethod.make(
+                    CtClass.intType, // Return
+                    "onPlayerGainedBlock", // Method name
+                    new CtClass[]{CtClass.floatType}, //Paramters
+                    null, // Exceptions
+                    "{" +
+                            "if($1 > 0 && !grayscale) { " +
+                            "this.flash();" +
+                            "addToBot(new com.megacrit.cardcrawl.actions.common.GainBlockAction(com.megacrit.cardcrawl.dungeons.AbstractDungeon.player, com.megacrit.cardcrawl.dungeons.AbstractDungeon.player, 6));" +
+                            "this.grayscale = true;" +
+                            "}" +
+                            "return com.badlogic.gdx.math.MathUtils.floor($1);" +
+                     "}",
+                    ctClass
+            );
+            ctClass.addMethod(method);
+
+            CtMethod method2 = CtNewMethod.make(
+                    CtClass.voidType, // Return
+                    "justEnteredRoom", // Method name
+                    new CtClass[]{ctAbstractRoom}, //Paramters
+                    null, // Exceptions
+                    "{" +
+                                "this.grayscale = false;" +
+                            "}",
+                    ctClass
+            );
+            ctClass.addMethod(method2);
         }
     }
+
+    @SpirePatch(clz = RingOfTheSerpent.class, method = "onUnequip")
+    @SpirePatch(clz = RingOfTheSerpent.class, method = "onEquip")
+    public static class SerpentRing_FuckOriginalEffect {
+        @SpirePrefixPatch
+        public static SpireReturn patch(RingOfTheSerpent __instance) {
+            return SpireReturn.Return(null);
+        }
+    }
+
+    @SpirePatch(clz = RingOfTheSerpent.class, method = "getUpdatedDescription")
+    public static class SerpentRing_FuckOriginalDesc {
+        @SpirePostfixPatch
+        public static String patch(RingOfTheSerpent __instance) {
+            return "The first time you gain #yBlock each turn, gain #b3 #yBlock and draw #b1 card.";
+        }
+    }
+
+    public static class SerpentRing_ReplaceOriginalEffect {
+        @SpirePrefixPatch
+        public static SpireReturn patch(RingOfTheSerpent __instance) {
+            __instance.beginLongPulse();
+            return SpireReturn.Return(null);
+        }
+    }
+
+    @SpirePatch(clz = RingOfTheSerpent.class, method = SpirePatch.CONSTRUCTOR)
+    public static class SerpentRing_NewEffect {
+        public static void Raw(CtBehavior ctMethodToPatch) throws NotFoundException, CannotCompileException {
+            CtClass ctClass = ctMethodToPatch.getDeclaringClass();
+            ClassPool pool = ctClass.getClassPool();
+            CtClass ctAbstractRoom = pool.get(AbstractRoom.class.getName());
+
+            CtMethod method = CtNewMethod.make(
+                    CtClass.intType, // Return
+                    "onPlayerGainedBlock", // Method name
+                    new CtClass[]{CtClass.floatType}, //Paramters
+                    null, // Exceptions
+                    "{" +
+                            "if($1 > 0 && pulse) { " +
+                            "this.flash();" +
+                            "addToBot(new com.megacrit.cardcrawl.actions.common.GainBlockAction(com.megacrit.cardcrawl.dungeons.AbstractDungeon.player, com.megacrit.cardcrawl.dungeons.AbstractDungeon.player, 3));" +
+                            "com.megacrit.cardcrawl.dungeons.AbstractDungeon.actionManager.addToBottom(new com.megacrit.cardcrawl.actions.common.DrawCardAction(1));" +
+                            "this.stopPulse();" +
+                            "}" +
+                            "return com.badlogic.gdx.math.MathUtils.floor($1);" +
+                            "}",
+                    ctClass
+            );
+            ctClass.addMethod(method);
+        }
+    }
+
 }
