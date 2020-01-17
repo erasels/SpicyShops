@@ -20,7 +20,7 @@ import javassist.*;
 import java.util.ArrayList;
 
 
-public class PotionLogicPatches {
+public class AllPatches {
     @SpirePatch(clz = TheSilent.class, method = "getStartingDeck")
     public static class BigFuckSilent {
         @SpirePostfixPatch
@@ -102,6 +102,7 @@ public class PotionLogicPatches {
         }
     }
 
+    @SpirePatch(clz = RingOfTheSerpent.class, method = "atTurnStart")
     public static class SerpentRing_ReplaceOriginalEffect {
         @SpirePrefixPatch
         public static SpireReturn patch(RingOfTheSerpent __instance) {
