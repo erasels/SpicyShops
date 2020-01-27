@@ -1,5 +1,6 @@
 package SacredBarkPlus.patches;
 
+import SacredBarkPlus.util.ManaHelper;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.evacipated.cardcrawl.modthespire.lib.*;
@@ -8,7 +9,6 @@ import com.megacrit.cardcrawl.core.Settings;
 import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
 import com.megacrit.cardcrawl.helpers.FontHelper;
 import com.megacrit.cardcrawl.helpers.Hitbox;
-import com.megacrit.cardcrawl.helpers.ImageMaster;
 import com.megacrit.cardcrawl.helpers.TipHelper;
 import com.megacrit.cardcrawl.helpers.input.InputHelper;
 import com.megacrit.cardcrawl.ui.panels.TopPanel;
@@ -20,7 +20,7 @@ import javassist.expr.NewExpr;
 
 import java.util.ArrayList;
 
-public class Patch {
+public class ManaDisplayPatches {
     //TODO: Actually make this use Mana
     @SpirePatch(clz = TopPanel.class, method = "renderHP")
     public static class ManaRender {
@@ -30,17 +30,24 @@ public class Patch {
                 public void edit(MethodCall m) throws CannotCompileException {
                     if (m.getClassName().equals(SpriteBatch.class.getName()) && m.getMethodName().equals("draw")) {
                         m.replace("{" +
+                                "if("+ ManaHelper.class.getName() + ".hasMana()) {" +
                                 "$proceed($1, $2, ICON_Y + 16f *" + Settings.class.getName() + ".scale, $4, $5, $6, $7, $8 *0.75f, $9*0.75f, $10, $11, $12, $13, $14, $15, $16);" +
-                                "sb.setColor(" + Color.class.getName() + ".ROYAL);" +
-                                //"$proceed($1, $2, ICON_Y + 32.0F * "+ Settings.class.getName() +".scale, $4, $5, $6, $7, $8, $9*0.5f, $10, $11, $12, $13, $14, $15, $16);" +
-                                "sb.draw(" + ImageMaster.class.getName() + ".TP_HP, hpIconX - 32.0F + 32.0F * " + Settings.class.getName() + ".scale, ICON_Y - 48.0F + 32.0F * " + Settings.class.getName() + ".scale, 32.0F, 32.0F, 64.0F, 64.0F, " + Settings.class.getName() + ".scale*0.75f, " + Settings.class.getName() + ".scale *0.75f, 0.0F, 0, 0, 64, 64, false, false);" +
-                                "sb.setColor(" + Color.class.getName() + ".WHITE);" +
-                                "}");
+                                "sb.draw(" + ManaHelper.class.getName() + ".MANA_ICON, hpIconX - 32.0F + 32.0F * " + Settings.class.getName() + ".scale, ICON_Y - 48.0F + 32.0F * " + Settings.class.getName() + ".scale, 32.0F, 32.0F, 64.0F, 64.0F, " + Settings.class.getName() + ".scale*0.75f, " + Settings.class.getName() + ".scale *0.75f, 0.0F, 0, 0, 64, 64, false, false);" +
+                                "} else {" +
+                                "$proceed($$);" +
+                                "}" +
+                                "}"
+                        );
                     } else if (m.getMethodName().equals("renderFontLeftTopAligned")) {
                         m.replace("{" +
+                                "if("+ ManaHelper.class.getName() + ".hasMana()) {" +
                                 "$proceed($1, $2, $3, $4, INFO_TEXT_Y + 18f, $6);" +
-                                FontHelper.class.getName() + ".renderFontLeftTopAligned(sb, " + FontHelper.class.getName() + ".topPanelInfoFont, " + AbstractDungeon.class.getName() + ".player.currentHealth + \"/\" + " + AbstractDungeon.class.getName() + ".player.maxHealth, hpIconX + HP_NUM_OFFSET_X, INFO_TEXT_Y - 14f, " + Color.class.getName() + ".SKY);" +
-                                "}");
+                                FontHelper.class.getName() + ".renderFontLeftTopAligned(sb, " + FontHelper.class.getName() + ".topPanelInfoFont, " + ManaHelper.class.getName() + ".getMP() + \"/\" + " + ManaHelper.class.getName() + ".getMaxMP(), hpIconX + HP_NUM_OFFSET_X, INFO_TEXT_Y - 14f, " + Color.class.getName() + ".SKY);" +
+                                "} else {" +
+                                "$proceed($$);" +
+                                "}" +
+                                "}"
+                        );
                     }
                 }
             };
@@ -48,7 +55,9 @@ public class Patch {
 
         @SpirePostfixPatch
         public static void patch(TopPanel __instance, SpriteBatch sb) {
-            ManaHitbox.hb.get(__instance).render(sb);
+            if(ManaHelper.hasMana()) {
+                ManaHitbox.hb.get(__instance).render(sb);
+            }
         }
     }
 
@@ -69,9 +78,14 @@ public class Patch {
                     if (m.getMethodName().equals("move") && firstMethod) {
                         firstMethod = false;
                         m.replace("{" +
+                                "if("+ ManaHelper.class.getName() + ".hasMana()) {" +
                                 "$proceed($1, $2 + 20f * " + Settings.class.getName() + ".scale);" +
                                 ManaAdjustHitbox.class.getName() + ".moveManaHB($1, $2);" +
-                                "}");
+                                "} else {" +
+                                "$proceed($$);" +
+                                "}" +
+                                "}"
+                        );
                     }
                 }
 
@@ -80,8 +94,12 @@ public class Patch {
                     if (firstNew) {
                         firstNew = false;
                         n.replace("{" +
+                                "if("+ ManaHelper.class.getName() + ".hasMana()) {" +
                                 "$_ = $proceed($1, $2 - 32f * " + Settings.class.getName() + ".scale);" +
                                 ManaAdjustHitbox.class.getName() + ".createManaHB($1, $2 - 32f * " + Settings.class.getName() + ".scale);" +
+                                "} else {" +
+                                "$_ = $proceed($$);" +
+                                "}" +
                                 "}"
                         );
                     }
@@ -102,7 +120,9 @@ public class Patch {
     public static class ManaHbUpdate {
         @SpireInsertPatch(locator = Locator.class)
         public static void patch(TopPanel __instance) {
-            ManaHitbox.hb.get(__instance).update();
+            if(ManaHelper.hasMana()) {
+                ManaHitbox.hb.get(__instance).update();
+            }
         }
 
         private static class Locator extends SpireInsertLocator {
@@ -119,7 +139,7 @@ public class Patch {
 
         @SpireInsertPatch(locator = Locator.class)
         public static SpireReturn patch(TopPanel __instance) {
-            if (ManaHitbox.hb.get(__instance).hovered) {
+            if (ManaHelper.hasMana() && ManaHitbox.hb.get(__instance).hovered) {
                 //TODO: Unhardcode strings
                 TipHelper.renderGenericTip(InputHelper.mX - TIP_OFF_X, TIP_Y, "Mana", "Things");
                 return SpireReturn.Return(null);
@@ -139,7 +159,9 @@ public class Patch {
     public static class ManaUnhoverHitbox {
         @SpirePostfixPatch
         public static void patch(TopPanel __instance) {
-            ManaHitbox.hb.get(__instance).unhover();
+            if(ManaHelper.hasMana()) {
+                ManaHitbox.hb.get(__instance).unhover();
+            }
         }
     }
 }
