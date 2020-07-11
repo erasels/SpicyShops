@@ -1,4 +1,4 @@
-# SacredBarkPlus (https://steamcommunity.com/sharedfiles/filedetails/?id=1897335248)
+# SpicyShops (https://steamcommunity.com/sharedfiles/filedetails/?id=1897335248)
 Sacred Bark is a new relic from the beta branch that doubles potion effectiveness. Potions that don't rely on numbers are sadly ignored and don't receive any benefit from this relic.
 
 This mod fixes that.
