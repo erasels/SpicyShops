@@ -4,7 +4,7 @@
     <!--Hello! You'll basically should only need to change these names and the steam path (just below)-->
     <!--The author name(s) as they appear in MTS and any other comments are in your ModTheSpire.json-->
     <groupId>UpdateBodyText</groupId>
-    <artifactId>SpicyShops</artifactId>
+    <artifactId>spicyShops</artifactId>
     <name>Spicy Shops</name>
     <version>1.0.0</version>
     <description>Makes shops more interesting by adding modifiers to cards, potions and relics.</description>

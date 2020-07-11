@@ -2,11 +2,9 @@ package SpicyShops.patches;
 
 import SpicyShops.SpicyShops;
 import SpicyShops.cardMods.AbstractSpicySaleCMod;
-import SpicyShops.cardMods.FreeButExhaustCMod;
-import SpicyShops.util.TextureLoader;
 import basemod.helpers.CardModifierManager;
+import basemod.patches.com.megacrit.cardcrawl.cards.AbstractCard.CardModifierPatches;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 import com.evacipated.cardcrawl.modthespire.lib.*;
@@ -22,7 +20,6 @@ import java.util.ArrayList;
 
 public class SpicyCardPatches {
     private static final int MAX_SPICY_CARDS = 3;
-    private static final Texture cardTag = TextureLoader.getTexture(SpicyShops.makeUIPath("cardTag.png"));
 
     public static ArrayList<AbstractCard> spicyCards = new ArrayList<>();
 
@@ -39,10 +36,19 @@ public class SpicyCardPatches {
             for (int i = 0; i < spicyAmt; i++) {
                 AbstractCard c = allCards.get(AbstractDungeon.merchantRng.random(0, allCards.size() - 1));
                 allCards.remove(c);
-                spicyCards.add(c);
 
-                //Iterate through modifier list check is isApplicable create list of applicable modifiers and then apply one of them
-                AbstractSpicySaleCMod mod = new FreeButExhaustCMod();
+                ArrayList<AbstractSpicySaleCMod> applicable = new ArrayList<>();
+                for (AbstractSpicySaleCMod cmod: SpicyShops.cardMods) {
+                    if(cmod.isApplicable(c)) {
+                        applicable.add(cmod);
+                    }
+                }
+
+                if(applicable.isEmpty()) {
+                    continue;
+                }
+                spicyCards.add(c);
+                AbstractSpicySaleCMod mod = applicable.get(AbstractDungeon.merchantRng.random(0, applicable.size() - 1));
                 CardModifierManager.addModifier(c, mod);
                 c.price *= mod.getPriceMod(c);
             }
@@ -50,7 +56,7 @@ public class SpicyCardPatches {
 
         private static class Locator extends SpireInsertLocator {
             public int[] Locate(CtBehavior ctMethodToPatch) throws CannotCompileException, PatchingException {
-                Matcher finalMatcher = new Matcher.MethodCallMatcher(ShopScreen.class, "initCards");
+                Matcher finalMatcher = new Matcher.MethodCallMatcher(ShopScreen.class, "initRelics");
                 return LineFinder.findInOrder(ctMethodToPatch, new ArrayList<>(), finalMatcher);
             }
         }
@@ -60,12 +66,13 @@ public class SpicyCardPatches {
     public static class RenderSpicyCardTags {
         @SpireInsertPatch(locator = Locator.class)
         public static void patch(ShopScreen __instance, SpriteBatch sb) {
-            for (AbstractCard c :spicyCards) {
+            for (AbstractCard c : spicyCards) {
+                AbstractSpicySaleCMod mod = (AbstractSpicySaleCMod) CardModifierPatches.CardModifierFields.cardModifiers.get(c).stream().filter(cmod -> cmod instanceof AbstractSpicySaleCMod).findAny().get();
                 sb.setColor(Color.WHITE);
-                sb.draw(cardTag, c.current_x - 20f * Settings.scale + (c.drawScale - 0.75F) * 60.0F * Settings.scale, c.current_y + 60.0F * Settings.scale + (c.drawScale - 0.75F) * 90.0F * Settings.scale, 128.0F * Settings.scale * c.drawScale, 128.0F * Settings.scale * c.drawScale);
+                sb.draw(SpicyShops.tagTextures.get(mod.getTexturePath()), c.current_x - 20f * Settings.scale + (c.drawScale - 0.75F) * 60.0F * Settings.scale, c.current_y + 60.0F * Settings.scale + (c.drawScale - 0.75F) * 90.0F * Settings.scale, 128.0F * Settings.scale * c.drawScale, 128.0F * Settings.scale * c.drawScale);
                 sb.setBlendFunction(770, 1);
                 sb.setColor(new Color(1.0F, 1.0F, 1.0F, (MathUtils.cosDeg((float) (System.currentTimeMillis() / 5L % 360L)) + 1.25F) / 3.0F));
-                sb.draw(cardTag, c.current_x - 20f * Settings.scale + (c.drawScale - 0.75F) * 60.0F * Settings.scale, c.current_y + 60.0F * Settings.scale + (c.drawScale - 0.75F) * 90.0F * Settings.scale, 128.0F * Settings.scale * c.drawScale, 128.0F * Settings.scale * c.drawScale);
+                sb.draw(SpicyShops.tagTextures.get(mod.getTexturePath()), c.current_x - 20f * Settings.scale + (c.drawScale - 0.75F) * 60.0F * Settings.scale, c.current_y + 60.0F * Settings.scale + (c.drawScale - 0.75F) * 90.0F * Settings.scale, 128.0F * Settings.scale * c.drawScale, 128.0F * Settings.scale * c.drawScale);
                 sb.setBlendFunction(770, 771);
             }
         }
