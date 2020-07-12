@@ -36,7 +36,7 @@ public class SpicyPotionPatches {
         public static void patch(ShopScreen __instance, ArrayList<StorePotion> ___potions) {
             for (StorePotion p : ___potions) {
                 float roll = merchantRng.random(1.0f);
-                if (roll > 0.1f) {
+                if (roll > 0.75f) {
                     if (roll < 0.9f && canBeConcentrated(p.potion)) {
                         p.price *= 1.4f;
                         PotionUseField.isConcentrated.set(p.potion, true);
