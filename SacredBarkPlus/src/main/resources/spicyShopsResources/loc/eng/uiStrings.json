@@ -4,5 +4,11 @@
       "Plentiful",
       "This potion can be used twice."
     ]
+  },
+  "spicyShops:ConcentratedPotion": {
+    "TEXT": [
+      "Concentrated",
+      "This potion is #b50% more effective."
+    ]
   }
 }

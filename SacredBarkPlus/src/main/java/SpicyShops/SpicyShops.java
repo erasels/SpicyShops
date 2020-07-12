@@ -66,8 +66,26 @@ public class SpicyShops implements
                 int c = 0;
                 if (l != null && !l.isEmpty()) {
                     for (AbstractPotion p : AbstractDungeon.player.potions) {
-                        SpicyPotionPatches.PotionUseField.useCount.set(p, l.get(NumberUtils.min(c++, AbstractDungeon.player.potions.size() - 1)));
+                        SpicyPotionPatches.PotionUseField.useCount.set(p, l.get(NumberUtils.min(c, AbstractDungeon.player.potions.size() - 1)));
                         SpicyPotionPatches.PotionUseField.isBig.set(p, l.get(NumberUtils.min(c++, AbstractDungeon.player.potions.size() - 1)) > 0);
+                    }
+                }
+            }
+        });
+
+        BaseMod.addSaveField("SSConcPotion", new CustomSavable<List<Boolean>>() {
+            @Override
+            public List<Boolean> onSave() {
+                return AbstractDungeon.player.potions.stream().map(p -> SpicyPotionPatches.PotionUseField.isConcentrated.get(p)).collect(Collectors.toCollection(ArrayList::new));
+            }
+
+            @Override
+            public void onLoad(List<Boolean> l) {
+                int c = 0;
+                if (l != null && !l.isEmpty()) {
+                    for (AbstractPotion p : AbstractDungeon.player.potions) {
+                        SpicyPotionPatches.PotionUseField.isConcentrated.set(p, l.get(NumberUtils.min(c++, AbstractDungeon.player.potions.size() - 1)));
+                        p.initializeData();
                     }
                 }
             }

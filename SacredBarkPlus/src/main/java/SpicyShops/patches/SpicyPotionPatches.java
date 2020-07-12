@@ -1,7 +1,11 @@
 package SpicyShops.patches;
 
 import SpicyShops.SpicyShops;
+import SpicyShops.vfx.ConcentratedPotionEffect;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.MathUtils;
 import com.evacipated.cardcrawl.mod.hubris.relics.EmptyBottle;
 import com.evacipated.cardcrawl.modthespire.lib.*;
 import com.megacrit.cardcrawl.cards.DamageInfo;
@@ -11,7 +15,7 @@ import com.megacrit.cardcrawl.core.Settings;
 import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
 import com.megacrit.cardcrawl.helpers.FontHelper;
 import com.megacrit.cardcrawl.helpers.PowerTip;
-import com.megacrit.cardcrawl.potions.AbstractPotion;
+import com.megacrit.cardcrawl.potions.*;
 import com.megacrit.cardcrawl.shop.ShopScreen;
 import com.megacrit.cardcrawl.shop.StorePotion;
 import com.megacrit.cardcrawl.ui.panels.PotionPopUp;
@@ -19,34 +23,50 @@ import com.megacrit.cardcrawl.ui.panels.TopPanel;
 import javassist.CtBehavior;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import static SpicyShops.SpicyShops.hasHubris;
+import static com.megacrit.cardcrawl.dungeons.AbstractDungeon.merchantRng;
 
 public class SpicyPotionPatches {
     //Shop system
     @SpirePatch(clz = ShopScreen.class, method = "initPotions")
-    public static class BigPotionGen {
+    public static class PotionModifierGen {
         @SpirePostfixPatch
         public static void patch(ShopScreen __instance, ArrayList<StorePotion> ___potions) {
-            for(StorePotion p : ___potions) {
-                if(AbstractDungeon.merchantRng.randomBoolean(0.2f)) {
-                    p.price *= 1.8f;
-                    PotionUseField.isBig.set(p.potion, true);
+            for (StorePotion p : ___potions) {
+                float roll = merchantRng.random(1.0f);
+                if (roll > 0.1f) {
+                    if (roll < 0.9f && canBeConcentrated(p.potion)) {
+                        p.price *= 1.4f;
+                        PotionUseField.isConcentrated.set(p.potion, true);
+                        p.potion.initializeData();
+                    } else {
+                        p.price *= 1.8f;
+                        PotionUseField.isBig.set(p.potion, true);
+                    }
                 }
             }
         }
+
+        private static boolean canBeConcentrated(AbstractPotion p) {
+            return !(new ArrayList<>(Arrays.asList(Ambrosia.POTION_ID, BlessingOfTheForge.POTION_ID, Elixir.POTION_ID, EntropicBrew.POTION_ID, GamblersBrew.POTION_ID, SmokeBomb.POTION_ID, StancePotion.POTION_ID)).contains(p.ID));
+
+        }
     }
 
-    //Big potion system
+    //Potion modifier system
     public static final int USES = 2;
 
     @SpirePatch(clz = AbstractPotion.class, method = SpirePatch.CLASS)
     public static class PotionUseField {
         public static SpireField<Boolean> isBig = new SpireField<>(() -> false);
         public static SpireField<Integer> useCount = new SpireField<>(() -> USES);
+
+        public static SpireField<Boolean> isConcentrated = new SpireField<>(() -> false);
     }
 
-    //Render the number if the potion is affected, the player has sacred bark nad hubris/empty bottle isn't present
+    //Render stuff if the potion has a modifier
     @SpirePatch(clz = TopPanel.class, method = "renderPotions")
     public static class Render {
         public static void Postfix(TopPanel __instance, SpriteBatch sb) {
@@ -59,29 +79,49 @@ public class SpicyPotionPatches {
                                 p.posX + 20.0f * Settings.scale, p.posY - 14.0f * Settings.scale,
                                 Settings.CREAM_COLOR);
                     }
+                } else if (PotionUseField.isConcentrated.get(p)) {
+                    if (p.isObtained) {
+                        FontHelper.renderFontRightTopAligned(sb, FontHelper.topPanelAmountFont,
+                                "+",
+                                p.posX - 15.0f * Settings.scale, p.posY - 14.0f * Settings.scale,
+                                Color.FOREST);
+                    }
                 }
             }
         }
     }
 
-    private static String[] bigPotion = CardCrawlGame.languagePack.getUIString(SpicyShops.makeID("BigPotion")).TEXT;
-
     @SpirePatch(clz = AbstractPotion.class, method = "shopRender")
-    public static class BIGRenderPotion {
+    public static class RenderModifierTips {
+        private static float sparkleTimer = 0.5F;
+
         @SpirePrefixPatch
         public static void addTip(AbstractPotion __instance, SpriteBatch sb) {
-            if(PotionUseField.isBig.get(__instance)) {
+            if (PotionUseField.isBig.get(__instance)) {
                 PowerTip pt = new PowerTip(bigPotion[0], bigPotion[1]);
 
-                if(__instance.tips.stream().noneMatch(tip -> pt.header.equals(tip.header))) {
+                if (__instance.tips.stream().noneMatch(tip -> pt.header.equals(tip.header))) {
                     __instance.tips.add(pt);
+                }
+            } else if (PotionUseField.isConcentrated.get(__instance)) {
+                PowerTip pt = new PowerTip(concPotion[0], concPotion[1]);
+
+                if (__instance.tips.stream().noneMatch(tip -> pt.header.equals(tip.header))) {
+                    __instance.tips.add(pt);
+                }
+
+                sparkleTimer -= Gdx.graphics.getDeltaTime();
+                if (!Settings.DISABLE_EFFECTS && sparkleTimer < 0.0F) {
+                    AbstractDungeon.topLevelEffectsQueue.add(new ConcentratedPotionEffect(__instance.hb));
+                    sparkleTimer = MathUtils.random(0.4F, 0.05F);
                 }
             }
         }
 
+        //Increase scale of potion in shop to show it's special
         @SpireInsertPatch(locator = Locator.class)
         public static void incScale(AbstractPotion __instance, SpriteBatch sb) {
-            if(PotionUseField.isBig.get(__instance)) {
+            if (PotionUseField.isBig.get(__instance)) {
                 __instance.scale *= 1.5f;
             }
         }
@@ -94,6 +134,30 @@ public class SpicyPotionPatches {
             }
         }
     }
+
+    //Concentrated potions
+    private static String[] concPotion = CardCrawlGame.languagePack.getUIString(SpicyShops.makeID("ConcentratedPotion")).TEXT;
+
+    @SpirePatch(clz = AbstractPotion.class, method = "getPotency", paramtypez = {})
+    public static class IncreasePotency {
+        @SpireInsertPatch(locator = Locator.class, localvars = {"potency"})
+        public static void patch(AbstractPotion __instance, @ByRef int[] potency) {
+            if (PotionUseField.isConcentrated.get(__instance)) {
+                potency[0] *= 1.5f;
+            }
+        }
+
+        private static class Locator extends SpireInsertLocator {
+            @Override
+            public int[] Locate(CtBehavior ctMethodToPatch) throws Exception {
+                Matcher finalMatcher = new Matcher.MethodCallMatcher(AbstractPlayer.class, "hasRelic");
+                return LineFinder.findInOrder(ctMethodToPatch, finalMatcher);
+            }
+        }
+    }
+
+    //Big potions
+    private static String[] bigPotion = CardCrawlGame.languagePack.getUIString(SpicyShops.makeID("BigPotion")).TEXT;
 
     public static AbstractPotion potion;
 
