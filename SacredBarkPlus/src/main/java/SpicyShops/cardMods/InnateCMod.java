@@ -35,7 +35,7 @@ public class InnateCMod extends AbstractSpicySaleCMod{
 
     @Override
     public boolean isApplicable(AbstractCard c) {
-        return !(c.isInnate || c.inBottleFlame || c.inBottleLightning || c.inBottleTornado);
+        return !c.isInnate;
     }
 
     @Override
