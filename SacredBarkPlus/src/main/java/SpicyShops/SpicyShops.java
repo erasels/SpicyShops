@@ -10,17 +10,22 @@ import basemod.interfaces.EditStringsSubscriber;
 import basemod.interfaces.PostInitializeSubscriber;
 import basemod.interfaces.PostUpdateSubscriber;
 import basemod.interfaces.RelicGetSubscriber;
+import basemod.patches.whatmod.WhatMod;
 import com.badlogic.gdx.graphics.Texture;
 import com.evacipated.cardcrawl.mod.hubris.patches.potions.AbstractPotion.PotionUseCountField;
 import com.evacipated.cardcrawl.mod.hubris.relics.EmptyBottle;
 import com.evacipated.cardcrawl.modthespire.Loader;
 import com.evacipated.cardcrawl.modthespire.lib.SpireInitializer;
+import com.megacrit.cardcrawl.cards.AbstractCard;
 import com.megacrit.cardcrawl.core.CardCrawlGame;
 import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
+import com.megacrit.cardcrawl.helpers.CardLibrary;
 import com.megacrit.cardcrawl.localization.UIStrings;
 import com.megacrit.cardcrawl.potions.AbstractPotion;
 import com.megacrit.cardcrawl.relics.AbstractRelic;
 import org.apache.commons.lang3.math.NumberUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -35,11 +40,14 @@ public class SpicyShops implements
         RelicGetSubscriber {
     public static ArrayList<AbstractSpicySaleCMod> cardMods = new ArrayList<>();
     public static HashMap<String, Texture> tagTextures = new HashMap<>();
+    public static ArrayList<String> vanillaCurses = new ArrayList<>();
     public static final boolean hasHubris;
 
     static {
         hasHubris = Loader.isModLoaded("hubris");
     }
+
+    public static final Logger logger = LogManager.getLogger(SpicyShops.class.getName());
 
     public static void initialize() {
         BaseMod.subscribe(new SpicyShops());
@@ -90,6 +98,13 @@ public class SpicyShops implements
                 }
             }
         });
+
+        for(AbstractCard c : CardLibrary.getCardList(CardLibrary.LibraryType.CURSE)) {
+            //Remove modded curses
+            if(WhatMod.findModID(c.getClass()) == null) {
+                vanillaCurses.add(c.cardID);
+            }
+        }
     }
 
     @Override
