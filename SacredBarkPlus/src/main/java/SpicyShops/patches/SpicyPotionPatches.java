@@ -38,11 +38,11 @@ public class SpicyPotionPatches {
                 float roll = merchantRng.random(1.0f);
                 if (roll > 0.75f) {
                     if (roll < 0.9f && canBeConcentrated(p.potion)) {
-                        p.price *= 1.4f;
+                        p.price *= 1.5f;
                         PotionUseField.isConcentrated.set(p.potion, true);
                         p.potion.initializeData();
                     } else {
-                        p.price *= 1.8f;
+                        p.price *= 2f;
                         PotionUseField.isBig.set(p.potion, true);
                     }
                 }
