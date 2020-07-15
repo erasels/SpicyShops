@@ -10,5 +10,11 @@
       "Concentrated",
       "This potion is #b50% more effective."
     ]
+  },
+  "spicyShops:CurseRelicTrade": {
+    "TEXT": [
+      "Add a Curse",
+      "This relic has a big discount but you will also get the shown #yCurse when buying it."
+    ]
   }
 }

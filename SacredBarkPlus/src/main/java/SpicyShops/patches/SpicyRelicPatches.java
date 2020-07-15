@@ -5,9 +5,11 @@ import SpicyShops.util.HelperClass;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.evacipated.cardcrawl.modthespire.lib.*;
 import com.megacrit.cardcrawl.cards.AbstractCard;
+import com.megacrit.cardcrawl.core.CardCrawlGame;
 import com.megacrit.cardcrawl.core.Settings;
 import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
 import com.megacrit.cardcrawl.helpers.CardLibrary;
+import com.megacrit.cardcrawl.helpers.PowerTip;
 import com.megacrit.cardcrawl.relics.AbstractRelic;
 import com.megacrit.cardcrawl.shop.ShopScreen;
 import com.megacrit.cardcrawl.shop.StoreRelic;
@@ -19,6 +21,8 @@ import java.util.ArrayList;
 public class SpicyRelicPatches {
     private static final float CURSE_DISCOUNT_CHANCE = 0.99f;
     private static final float CURSE_DISCOUNT = 0.66f;
+
+    private static String[] cruseTrade = CardCrawlGame.languagePack.getUIString(SpicyShops.makeID("CurseRelicTrade")).TEXT;
 
     @SpirePatch(clz = StoreRelic.class, method = SpirePatch.CLASS)
     public static class ShopRelicFields {
@@ -34,8 +38,10 @@ public class SpicyRelicPatches {
                 StoreRelic rel = HelperClass.getRandomItem(___relics, AbstractDungeon.merchantRng);
                 if(rel != null) {
                     ShopRelicFields.bonusCard.set(rel, CardLibrary.getCard(HelperClass.getRandomItem(SpicyShops.vanillaCurses, AbstractDungeon.merchantRng)).makeCopy());
-                    SpicyShops.logger.info(rel.relic.name + " has a curse (" + ShopRelicFields.bonusCard.get(rel).name + ")attached to it for a discount. ");
+                    SpicyShops.logger.info(rel.relic.name + " has a curse (" + ShopRelicFields.bonusCard.get(rel).name + ") attached to it for a discount. Original cost: " + rel.price);
                     rel.price *= CURSE_DISCOUNT;
+
+                    rel.relic.tips.add(new PowerTip(cruseTrade[0], cruseTrade[1]));
                 }
             }
         }
@@ -67,6 +73,7 @@ public class SpicyRelicPatches {
                 if(c.type == AbstractCard.CardType.CURSE) {
                     AbstractDungeon.topLevelEffects.add(new FastCardObtainEffect(c, c.current_x, c.current_y));
                     ShopRelicFields.bonusCard.set(__instance, null);
+                    __instance.relic.tips.removeIf(pt -> pt.header.equalsIgnoreCase(cruseTrade[0]));
                 }
             }
         }
