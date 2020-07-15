@@ -28,13 +28,13 @@ public class ConcentratedPotionEffect extends AbstractGameEffect {
         this.y = y;
     }
 
-    public ConcentratedPotionEffect(Hitbox hb) {
+    public ConcentratedPotionEffect(Hitbox hb, Color c) {
         this.hb = hb;
         img = ImageMaster.GLOW_SPARK_2;
         duration = MathUtils.random(0.6F, 1F);
         scale = MathUtils.random(0.4F, 0.8F) * Settings.scale;
         dur_div2 = duration / 2.0F;
-        color = new Color(0.2F, MathUtils.random(0.8F, 1.0F), 0.3f, 0.0F);
+        color = c;
         oX = MathUtils.random(-25.0F, 25.0F) * Settings.scale;
         oY = MathUtils.random(-25.0F, 25.0F) * Settings.scale;
         oX -= img.packedWidth / 2.0F;
@@ -43,6 +43,10 @@ public class ConcentratedPotionEffect extends AbstractGameEffect {
         vY = MathUtils.random(-7.0F, 7.0F) * Settings.scale;
         renderBehind = MathUtils.randomBoolean(0.2F + this.scale - 0.5F);
         rotation = MathUtils.random(-8.0F, 8.0F);
+    }
+
+    public ConcentratedPotionEffect(Hitbox hb) {
+        this(hb, new Color(0.2F, MathUtils.random(0.8F, 1.0F), 0.3f, 0.0F));
     }
 
     public void update() {

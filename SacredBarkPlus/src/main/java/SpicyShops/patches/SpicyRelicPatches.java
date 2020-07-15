@@ -2,7 +2,11 @@ package SpicyShops.patches;
 
 import SpicyShops.SpicyShops;
 import SpicyShops.util.HelperClass;
+import SpicyShops.vfx.ConcentratedPotionEffect;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.MathUtils;
 import com.evacipated.cardcrawl.modthespire.lib.*;
 import com.megacrit.cardcrawl.cards.AbstractCard;
 import com.megacrit.cardcrawl.core.CardCrawlGame;
@@ -19,8 +23,8 @@ import javassist.CtBehavior;
 import java.util.ArrayList;
 
 public class SpicyRelicPatches {
-    private static final float CURSE_DISCOUNT_CHANCE = 0.99f;
-    private static final float CURSE_DISCOUNT = 0.66f;
+    private static final float CURSE_DISCOUNT_CHANCE = 0.15f;
+    private static final float CURSE_DISCOUNT = 0.4f;
 
     private static String[] cruseTrade = CardCrawlGame.languagePack.getUIString(SpicyShops.makeID("CurseRelicTrade")).TEXT;
 
@@ -49,6 +53,8 @@ public class SpicyRelicPatches {
 
     @SpirePatch(clz = StoreRelic.class, method = "render")
     public static class RenderRelicSpecials {
+        private static float sparkleTimer = 0.75F;
+
         @SpirePostfixPatch
         public static void patch(StoreRelic __instance, SpriteBatch sb) {
             AbstractCard c = ShopRelicFields.bonusCard.get(__instance);
@@ -59,6 +65,23 @@ public class SpicyRelicPatches {
                     c.current_x = __instance.relic.hb.x + (((__instance.relic.hb.width + (!__instance.relic.hb.hovered?(25f * Settings.scale):0)) * (__instance.relic.hb.hovered?-1f:1f)) * __instance.relic.scale);
                     c.current_y = __instance.relic.hb.y + ((__instance.relic.hb.height/2f)*__instance.relic.scale);
                     c.render(sb);
+
+                    sparkleTimer -= Gdx.graphics.getDeltaTime();
+                    if (!Settings.DISABLE_EFFECTS && sparkleTimer < 0.0F) {
+                        Color col = Color.WHITE;
+                        switch(MathUtils.random(0, 2)) {
+                            case 0:
+                                col = Color.FIREBRICK;
+                                break;
+                            case 1:
+                                col = Color.PURPLE;
+                                break;
+                            case 2:
+                                col = Color.DARK_GRAY;
+                        }
+                        AbstractDungeon.topLevelEffectsQueue.add(new ConcentratedPotionEffect(__instance.relic.hb, col));
+                        sparkleTimer = MathUtils.random(0.6F, 0.75F);
+                    }
                 }
             }
         }
