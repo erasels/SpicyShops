@@ -65,8 +65,12 @@ public class SpicyShops implements
         BaseMod.addSaveField("SSBigPotion", new CustomSavable<List<Integer>>() {
             @Override
             public List<Integer> onSave() {
-                //Sets the useCount to a negative if the potion shouldn't be affected
-                return AbstractDungeon.player.potions.stream().map(p -> SpicyPotionPatches.PotionUseField.useCount.get(p) * (SpicyPotionPatches.PotionUseField.isBig.get(p)?1:-1)).collect(Collectors.toCollection(ArrayList::new));
+                return AbstractDungeon.player.potions.stream().map(p -> {
+                    if(SpicyPotionPatches.PotionUseField.isBig.get(p)) {
+                        return SpicyPotionPatches.PotionUseField.useCount.get(p);
+                    }
+                    return  0;
+                }).collect(Collectors.toCollection(ArrayList::new));
             }
 
             @Override
