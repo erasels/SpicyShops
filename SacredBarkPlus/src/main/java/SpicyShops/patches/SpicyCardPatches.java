@@ -89,6 +89,7 @@ public class SpicyCardPatches {
                 sb.setColor(new Color(1.0F, 1.0F, 1.0F, (MathUtils.cosDeg((float) (System.currentTimeMillis() / 5L % 360L)) + 1.25F) / 3.0F));
                 sb.draw(SpicyShops.tagTextures.get(mod.getTexturePath()), c.current_x - 20f * Settings.scale + (c.drawScale - 0.75F) * 60.0F * Settings.scale, c.current_y + 60.0F * Settings.scale + (c.drawScale - 0.75F) * 90.0F * Settings.scale, 128.0F * Settings.scale * c.drawScale, 128.0F * Settings.scale * c.drawScale);
                 sb.setBlendFunction(770, 771);
+                sb.setColor(Color.WHITE);
             }
         }
 
