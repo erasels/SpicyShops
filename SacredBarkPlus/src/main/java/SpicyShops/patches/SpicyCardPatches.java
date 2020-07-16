@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 import com.evacipated.cardcrawl.modthespire.lib.*;
 import com.evacipated.cardcrawl.modthespire.patcher.PatchingException;
+import com.megacrit.cardcrawl.audio.SoundMaster;
 import com.megacrit.cardcrawl.cards.AbstractCard;
 import com.megacrit.cardcrawl.core.Settings;
 import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
@@ -19,8 +20,6 @@ import javassist.CtBehavior;
 import java.util.ArrayList;
 
 public class SpicyCardPatches {
-    private static final int MAX_SPICY_CARDS = 3;
-
     public static ArrayList<AbstractCard> spicyCards = new ArrayList<>();
 
     @SpirePatch(clz = ShopScreen.class, method = "init")
@@ -31,7 +30,8 @@ public class SpicyCardPatches {
             ArrayList<AbstractCard> allCards = new ArrayList<>();
             allCards.addAll(coloredCards);
             allCards.addAll(colorlessCards);
-            int spicyAmt = 1 + (AbstractDungeon.merchantRng.randomBoolean(0.4f) ? 1 : 0) + (AbstractDungeon.merchantRng.randomBoolean(0.25f) ? 1 : 0);
+            float roll = AbstractDungeon.merchantRng.random(1f);
+            int spicyAmt = 1 + (roll > 0.49f ? 1 : 0) + (roll > 0.74f ? 1 : 0) + (roll > 0.9f ? 1 : 0);
 
             for (int i = 0; i < spicyAmt; i++) {
                 AbstractCard c = allCards.get(AbstractDungeon.merchantRng.random(0, allCards.size() - 1));
@@ -57,6 +57,21 @@ public class SpicyCardPatches {
         private static class Locator extends SpireInsertLocator {
             public int[] Locate(CtBehavior ctMethodToPatch) throws CannotCompileException, PatchingException {
                 Matcher finalMatcher = new Matcher.MethodCallMatcher(ShopScreen.class, "initRelics");
+                return LineFinder.findInOrder(ctMethodToPatch, new ArrayList<>(), finalMatcher);
+            }
+        }
+    }
+
+    @SpirePatch(clz = ShopScreen.class, method = "purchaseCard")
+    public static class PurchaseCardHooks {
+        @SpireInsertPatch(locator = Locator.class)
+        public static void removeSpicyCard(ShopScreen __instance, AbstractCard card) {
+            spicyCards.remove(card);
+        }
+
+        private static class Locator extends SpireInsertLocator {
+            public int[] Locate(CtBehavior ctMethodToPatch) throws CannotCompileException, PatchingException {
+                Matcher finalMatcher = new Matcher.MethodCallMatcher(SoundMaster.class, "play");
                 return LineFinder.findInOrder(ctMethodToPatch, new ArrayList<>(), finalMatcher);
             }
         }
