@@ -20,7 +20,8 @@ public class ReshuffleCMod extends AbstractSpicySaleCMod{
 
     @Override
     public String modifyDescription(String rawDescription, AbstractCard card) {
-        return rawDescription + " NL " + SpicyShops.getModID() + ":" + HelperClass.capitalize(SpicyShops.modKeywords.get("Reshuffle").NAMES[0]) + LocalizedStrings.PERIOD;
+        String tmp = SpicyShops.modKeywords.get("Reshuffle").NAMES[0];
+        return rawDescription + " NL " + HelperClass.capitalize(tmp, tmp.substring(tmp.indexOf(":") + 1)) + LocalizedStrings.PERIOD;
     }
 
     @Override
