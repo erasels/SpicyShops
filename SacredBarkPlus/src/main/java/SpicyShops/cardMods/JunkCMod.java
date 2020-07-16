@@ -30,7 +30,7 @@ public class JunkCMod extends AbstractSpicySaleCMod{
         AbstractCard checkCard = c.makeCopy();
         checkCard.upgrade();
         boolean costChanged = c.cost != checkCard.cost;
-        return c.rarity != AbstractCard.CardRarity.COMMON && c.price > AbstractDungeon.player.gold && !costChanged;
+        return c.rarity != AbstractCard.CardRarity.COMMON && c.price > AbstractDungeon.player.gold && c.cost >= 0 && !costChanged;
     }
 
     @Override

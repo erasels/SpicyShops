@@ -30,7 +30,7 @@ public class ReshuffleCMod extends AbstractSpicySaleCMod{
 
     @Override
     public boolean isApplicable(AbstractCard c) {
-        return !(c.exhaust || c.type == AbstractCard.CardType.POWER);
+        return !(c.exhaust || c.type == AbstractCard.CardType.POWER) && c.cost != -2;
     }
 
     @Override
