@@ -5,5 +5,12 @@
       "reshuffle"
     ],
     "DESCRIPTION": "When played, shuffle this card into your draw pile."
+  },
+  {
+    "PROPER_NAME": "Repeat",
+    "NAMES": [
+      "repeat"
+    ],
+    "DESCRIPTION": "Repeat the effect of this card."
   }
 ]
