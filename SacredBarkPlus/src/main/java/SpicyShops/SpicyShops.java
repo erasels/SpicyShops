@@ -6,16 +6,16 @@ import SpicyShops.util.TextureLoader;
 import basemod.AutoAdd;
 import basemod.BaseMod;
 import basemod.abstracts.CustomSavable;
-import basemod.interfaces.EditStringsSubscriber;
-import basemod.interfaces.PostInitializeSubscriber;
-import basemod.interfaces.PostUpdateSubscriber;
-import basemod.interfaces.RelicGetSubscriber;
+import basemod.interfaces.*;
 import basemod.patches.whatmod.WhatMod;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.evacipated.cardcrawl.mod.hubris.patches.potions.AbstractPotion.PotionUseCountField;
 import com.evacipated.cardcrawl.mod.hubris.relics.EmptyBottle;
+import com.evacipated.cardcrawl.mod.stslib.Keyword;
 import com.evacipated.cardcrawl.modthespire.Loader;
 import com.evacipated.cardcrawl.modthespire.lib.SpireInitializer;
+import com.google.gson.Gson;
 import com.megacrit.cardcrawl.cards.AbstractCard;
 import com.megacrit.cardcrawl.core.CardCrawlGame;
 import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
@@ -27,6 +27,7 @@ import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -37,10 +38,12 @@ public class SpicyShops implements
         PostInitializeSubscriber,
         EditStringsSubscriber,
         PostUpdateSubscriber,
-        RelicGetSubscriber {
+        RelicGetSubscriber,
+        EditKeywordsSubscriber {
     public static ArrayList<AbstractSpicySaleCMod> cardMods = new ArrayList<>();
     public static HashMap<String, Texture> tagTextures = new HashMap<>();
     public static ArrayList<String> vanillaCurses = new ArrayList<>();
+    public static HashMap<String, Keyword> modKeywords = new HashMap<>();
     public static final boolean hasHubris;
 
     static {
@@ -133,6 +136,20 @@ public class SpicyShops implements
     @Override
     public void receiveEditStrings() {
         BaseMod.loadCustomStringsFile(UIStrings.class, getModID() + "Resources/loc/eng/uiStrings.json");
+    }
+
+    @Override
+    public void receiveEditKeywords() {
+        Gson gson = new Gson();
+        String json = Gdx.files.internal(getModID() + "Resources/loc/eng/keywordStrings.json").readString(String.valueOf(StandardCharsets.UTF_8));
+        com.evacipated.cardcrawl.mod.stslib.Keyword[] keywords = gson.fromJson(json, com.evacipated.cardcrawl.mod.stslib.Keyword[].class);
+
+        if (keywords != null) {
+            for (Keyword keyword : keywords) {
+                BaseMod.addKeyword(getModID().toLowerCase(), keyword.PROPER_NAME, keyword.NAMES, keyword.DESCRIPTION);
+                modKeywords.put(keyword.PROPER_NAME, keyword);
+            }
+        }
     }
 
     public static String makeUIPath(String resourcePath) {
