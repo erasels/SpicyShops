@@ -80,7 +80,7 @@ public class SpicyRelicPatches {
                                 col = Color.DARK_GRAY;
                         }
                         AbstractDungeon.topLevelEffectsQueue.add(new ConcentratedPotionEffect(__instance.relic.hb, col));
-                        sparkleTimer = MathUtils.random(0.6F, 0.75F);
+                        sparkleTimer = MathUtils.random(0.45F, 0.65F);
                     }
                 }
             }
