@@ -4,13 +4,14 @@ import SpicyShops.SpicyShops;
 import com.badlogic.gdx.math.MathUtils;
 import com.megacrit.cardcrawl.cards.AbstractCard;
 import com.megacrit.cardcrawl.cards.blue.Turbo;
+import com.megacrit.cardcrawl.cards.colorless.Mayhem;
 import com.megacrit.cardcrawl.cards.red.Bloodletting;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 
 public class MagicCMod extends AbstractSpicySaleCMod {
-    private static ArrayList<String> excluded = new ArrayList<>(Arrays.asList(Bloodletting.ID, Turbo.ID));
+    private static ArrayList<String> excluded = new ArrayList<>(Arrays.asList(Bloodletting.ID, Turbo.ID, Mayhem.ID));
     public static final String ID = SpicyShops.getModID() + "Magic";
 
     @Override
