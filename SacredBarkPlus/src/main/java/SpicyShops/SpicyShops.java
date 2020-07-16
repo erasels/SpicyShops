@@ -69,10 +69,10 @@ public class SpicyShops implements
             @Override
             public List<Integer> onSave() {
                 return AbstractDungeon.player.potions.stream().map(p -> {
-                    if(SpicyPotionPatches.PotionUseField.isBig.get(p)) {
+                    if (SpicyPotionPatches.PotionUseField.isBig.get(p)) {
                         return SpicyPotionPatches.PotionUseField.useCount.get(p);
                     }
-                    return  0;
+                    return 0;
                 }).collect(Collectors.toCollection(ArrayList::new));
             }
 
@@ -106,9 +106,9 @@ public class SpicyShops implements
             }
         });
 
-        for(AbstractCard c : CardLibrary.getCardList(CardLibrary.LibraryType.CURSE)) {
+        for (AbstractCard c : CardLibrary.getCardList(CardLibrary.LibraryType.CURSE)) {
             //Remove modded curses
-            if(WhatMod.findModID(c.getClass()) == null) {
+            if (WhatMod.findModID(c.getClass()) == null) {
                 vanillaCurses.add(c.cardID);
             }
         }
