@@ -5,7 +5,6 @@ import com.evacipated.cardcrawl.modthespire.patcher.PatchingException;
 import com.megacrit.cardcrawl.core.Settings;
 import com.megacrit.cardcrawl.helpers.Hitbox;
 import com.megacrit.cardcrawl.shop.ShopScreen;
-import com.megacrit.cardcrawl.shop.StorePotion;
 import com.megacrit.cardcrawl.shop.StoreRelic;
 import javassist.CannotCompileException;
 import javassist.CtBehavior;
@@ -59,7 +58,7 @@ public class ExtraRelicChoicePatches {
         }
     }
 
-    private static float lowestYPos;
+    public static float lowestYPos;
     @SpirePatch(clz = StoreRelic.class, method = "update")
     public static class AdjustRelicPositions {
         @SpireInsertPatch(locator = Locator.class)
@@ -69,27 +68,6 @@ public class ExtraRelicChoicePatches {
             __instance.relic.currentX = 1000.0F * Settings.scale + 150.0F * (___slot - (3*relicRow)) * Settings.scale;
             __instance.relic.currentY = rugY + (418f - (128f * relicRow)) * Settings.scale;
             lowestYPos = Math.min(__instance.relic.currentY, lowestYPos);
-        }
-
-        private static class Locator extends SpireInsertLocator {
-            public int[] Locate(CtBehavior ctMethodToPatch) throws CannotCompileException, PatchingException {
-                Matcher finalMatcher = new Matcher.MethodCallMatcher(Hitbox.class, "move");
-                return LineFinder.findInOrder(ctMethodToPatch, new ArrayList<>(), finalMatcher);
-            }
-        }
-    }
-
-    @SpirePatch(clz = StorePotion.class, method = "update")
-    public static class AdjustPotionsDown {
-        @SpireInsertPatch(locator = Locator.class)
-        public static void patch(StorePotion __instance, float rugY, int ___slot) {
-            __instance.potion.posY -= 60f * Settings.scale;
-            //Down-adjusted the lowest y position to account for the price text
-            float diff = (lowestYPos - 128f * Settings.scale) - __instance.potion.posY;
-            if(diff < 0) {
-                //Add the difference since a negative value will decrease/lower the y position
-                __instance.potion.posY += diff;
-            }
         }
 
         private static class Locator extends SpireInsertLocator {
