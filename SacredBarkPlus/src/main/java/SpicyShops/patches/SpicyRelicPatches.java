@@ -23,7 +23,7 @@ import javassist.CtBehavior;
 import java.util.ArrayList;
 
 public class SpicyRelicPatches {
-    private static final float CURSE_DISCOUNT_CHANCE = 0.2f;
+    private static final float CURSE_DISCOUNT_CHANCE = 0.25f;
     private static final float CURSE_DISCOUNT = 0.4f;
 
     private static String[] cruseTrade = CardCrawlGame.languagePack.getUIString(SpicyShops.makeID("CurseRelicTrade")).TEXT;
