@@ -68,19 +68,10 @@ public class SpicyRelicPatches {
 
                     sparkleTimer -= Gdx.graphics.getDeltaTime();
                     if (!Settings.DISABLE_EFFECTS && sparkleTimer < 0.0F) {
-                        Color col = Color.WHITE;
-                        switch(MathUtils.random(0, 2)) {
-                            case 0:
-                                col = Color.FIREBRICK;
-                                break;
-                            case 1:
-                                col = Color.PURPLE;
-                                break;
-                            case 2:
-                                col = Color.DARK_GRAY;
-                        }
+                        Color col = MathUtils.randomBoolean()?Color.FIREBRICK : Color.PURPLE;
+
                         AbstractDungeon.topLevelEffectsQueue.add(new ConcentratedPotionEffect(__instance.relic.hb, col));
-                        sparkleTimer = MathUtils.random(0.45F, 0.65F);
+                        sparkleTimer = MathUtils.random(0.4F, 0.65F);
                     }
                 }
             }
