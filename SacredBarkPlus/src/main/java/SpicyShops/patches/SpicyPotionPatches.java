@@ -50,7 +50,7 @@ public class SpicyPotionPatches {
         }
 
         private static boolean canBeConcentrated(AbstractPotion p) {
-            return !(new ArrayList<>(Arrays.asList(Ambrosia.POTION_ID, BlessingOfTheForge.POTION_ID, Elixir.POTION_ID, EntropicBrew.POTION_ID, GamblersBrew.POTION_ID, SmokeBomb.POTION_ID, StancePotion.POTION_ID)).contains(p.ID));
+            return !(new ArrayList<>(Arrays.asList(Ambrosia.POTION_ID, BlessingOfTheForge.POTION_ID, Elixir.POTION_ID, EntropicBrew.POTION_ID, GamblersBrew.POTION_ID, SmokeBomb.POTION_ID, StancePotion.POTION_ID, AttackPotion.POTION_ID, PowerPotion.POTION_ID, SkillPotion.POTION_ID)).contains(p.ID));
 
         }
     }
