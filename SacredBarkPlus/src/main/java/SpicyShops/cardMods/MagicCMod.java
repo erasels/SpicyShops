@@ -3,15 +3,16 @@ package SpicyShops.cardMods;
 import SpicyShops.SpicyShops;
 import com.badlogic.gdx.math.MathUtils;
 import com.megacrit.cardcrawl.cards.AbstractCard;
-import com.megacrit.cardcrawl.cards.blue.Turbo;
-import com.megacrit.cardcrawl.cards.colorless.Mayhem;
-import com.megacrit.cardcrawl.cards.red.Bloodletting;
+import com.megacrit.cardcrawl.cards.blue.ThunderStrike;
+import com.megacrit.cardcrawl.cards.purple.DevaForm;
+import com.megacrit.cardcrawl.cards.purple.Halt;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 
 public class MagicCMod extends AbstractSpicySaleCMod {
-    private static ArrayList<String> excluded = new ArrayList<>(Arrays.asList(Bloodletting.ID, Turbo.ID, Mayhem.ID));
+    private static ArrayList<String> excluded = new ArrayList<>(Arrays.asList(ThunderStrike.ID, DevaForm.ID, Halt.ID));
     public static final String ID = SpicyShops.getModID() + "Magic";
 
     @Override
@@ -45,7 +46,7 @@ public class MagicCMod extends AbstractSpicySaleCMod {
 
     @Override
     public boolean isApplicable(AbstractCard c) {
-        return c.baseMagicNumber > 0 && excluded.stream().noneMatch(str -> str.equals(c.cardID));
+        return c.baseMagicNumber > 0 && StringUtils.containsIgnoreCase(c.rawDescription, "!M!") && excluded.stream().noneMatch(str -> str.equals(c.cardID));
     }
 
     @Override
