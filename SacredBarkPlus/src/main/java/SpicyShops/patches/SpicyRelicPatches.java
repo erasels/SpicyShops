@@ -63,21 +63,6 @@ public class SpicyRelicPatches {
             ArrayList<StoreRelic> unmodified = new ArrayList<>(___relics);
             StoreRelic rel;
 
-            //Potion slot offering
-            ArrayList<StoreRelic> rares = unmodified.stream().filter(r -> r.relic.tier == AbstractRelic.RelicTier.RARE).collect(Collectors.toCollection(ArrayList::new));
-            if(!rares.isEmpty() && AbstractDungeon.merchantRng.randomBoolean(RELIC_MODIFIER_CHANCE)) {
-                rel = HelperClass.getRandomItem(rares, AbstractDungeon.merchantRng);
-                if(rel != null) {
-                    unmodified.remove(rel);
-                    SpicyRelicFields.modifier.set(rel.relic, Modifiers.POTION_SACRIFICE);
-
-                    int tmp = POT_DISCOUNT + (AbstractDungeon.ascensionLevel >= 16? 0:20);
-                    SpicyShops.logger.info(rel.relic.name + " will lose you a potion slot for a "+tmp+" gold discount. Original cost: " + rel.price);
-                    rel.price = NumberUtils.max(0, rel.price - tmp);
-                    rel.relic.tips.add(new PowerTip(potTrade[0], potTrade[1]));
-                }
-            }
-
             //Bonus curse
             if(AbstractDungeon.merchantRng.randomBoolean(RELIC_MODIFIER_CHANCE)) {
                 rel = HelperClass.getRandomItem(unmodified, AbstractDungeon.merchantRng);
@@ -103,6 +88,21 @@ public class SpicyRelicPatches {
                     storedPTs.addAll(rel.relic.tips);
                     rel.relic.tips.clear();
                     rel.relic.tips.add(new PowerTip(unidTrade[0], unidTrade[1]));
+                }
+            }
+
+            //Potion slot offering
+            ArrayList<StoreRelic> rares = unmodified.stream().filter(r -> r.relic.tier == AbstractRelic.RelicTier.RARE).collect(Collectors.toCollection(ArrayList::new));
+            if(!rares.isEmpty() && AbstractDungeon.merchantRng.randomBoolean(RELIC_MODIFIER_CHANCE)) {
+                rel = HelperClass.getRandomItem(rares, AbstractDungeon.merchantRng);
+                if(rel != null) {
+                    unmodified.remove(rel);
+                    SpicyRelicFields.modifier.set(rel.relic, Modifiers.POTION_SACRIFICE);
+
+                    int tmp = POT_DISCOUNT + (AbstractDungeon.ascensionLevel >= 16? 0:20);
+                    SpicyShops.logger.info(rel.relic.name + " will lose you a potion slot for a "+tmp+" gold discount. Original cost: " + rel.price);
+                    rel.price = NumberUtils.max(0, rel.price - tmp);
+                    rel.relic.tips.add(new PowerTip(potTrade[0], potTrade[1]));
                 }
             }
 
