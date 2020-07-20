@@ -14,23 +14,36 @@ import com.megacrit.cardcrawl.core.Settings;
 import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
 import com.megacrit.cardcrawl.helpers.CardLibrary;
 import com.megacrit.cardcrawl.helpers.PowerTip;
+import com.megacrit.cardcrawl.potions.PotionSlot;
 import com.megacrit.cardcrawl.relics.AbstractRelic;
 import com.megacrit.cardcrawl.shop.ShopScreen;
 import com.megacrit.cardcrawl.shop.StoreRelic;
 import com.megacrit.cardcrawl.vfx.FastCardObtainEffect;
 import javassist.CtBehavior;
+import org.apache.commons.lang3.math.NumberUtils;
 
 import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 public class SpicyRelicPatches {
-    private static final float CURSE_DISCOUNT_CHANCE = 0.25f;
-    private static final float CURSE_DISCOUNT = 0.4f;
+    public enum Modifiers {
+        NONE, POTION_SACRIFICE, UNIDENTIFIABLE
+    }
+    private static final float RELIC_MODIFIER_CHANCE = 0.25f;
+    private static final float CURSE_DISCOUNT = 0.4f; //60%
+    private static final int POT_DISCOUNT = 200;
 
     private static String[] cruseTrade = CardCrawlGame.languagePack.getUIString(SpicyShops.makeID("CurseRelicTrade")).TEXT;
+    private static String[] potTrade = CardCrawlGame.languagePack.getUIString(SpicyShops.makeID("PotionSacrifice")).TEXT;
 
     @SpirePatch(clz = StoreRelic.class, method = SpirePatch.CLASS)
     public static class ShopRelicFields {
         public static SpireField<AbstractCard> bonusCard = new SpireField<>(() -> null);
+    }
+
+    @SpirePatch(clz = StoreRelic.class, method = SpirePatch.CLASS)
+    public static class SpicyRelicFields {
+        public static SpireField<Modifiers> modifier = new SpireField<>(() -> Modifiers.NONE);
     }
 
     @SpirePatch(clz = ShopScreen.class, method = "init")
@@ -38,25 +51,55 @@ public class SpicyRelicPatches {
         //Hook in after discounts are applied
         @SpirePostfixPatch
         public static void patch(ShopScreen __instance, ArrayList<AbstractCard> coloredCards, ArrayList<AbstractCard> colorlessCards, ArrayList<StoreRelic> ___relics) {
-            if(AbstractDungeon.merchantRng.randomBoolean(CURSE_DISCOUNT_CHANCE)) {
-                StoreRelic rel = HelperClass.getRandomItem(___relics, AbstractDungeon.merchantRng);
+            ArrayList<StoreRelic> unmodified = new ArrayList<>(___relics);
+            StoreRelic rel;
+            //Bonus curse
+            if(AbstractDungeon.merchantRng.randomBoolean(RELIC_MODIFIER_CHANCE)) {
+                rel = HelperClass.getRandomItem(unmodified, AbstractDungeon.merchantRng);
                 if(rel != null) {
+                    unmodified.remove(rel);
                     ShopRelicFields.bonusCard.set(rel, CardLibrary.getCard(HelperClass.getRandomItem(SpicyShops.vanillaCurses, AbstractDungeon.merchantRng)).makeCopy());
+
                     SpicyShops.logger.info(rel.relic.name + " has a curse (" + ShopRelicFields.bonusCard.get(rel).name + ") attached to it for a discount. Original cost: " + rel.price);
                     rel.price *= CURSE_DISCOUNT;
-
                     rel.relic.tips.add(new PowerTip(cruseTrade[0], cruseTrade[1]));
                 }
+            }
+
+            //Potion slot offering
+            ArrayList<StoreRelic> rares = unmodified.stream().filter(r -> r.relic.tier == AbstractRelic.RelicTier.RARE).collect(Collectors.toCollection(ArrayList::new));
+            if(AbstractDungeon.merchantRng.randomBoolean(RELIC_MODIFIER_CHANCE)) {
+                rel = HelperClass.getRandomItem(rares, AbstractDungeon.merchantRng);
+                if(rel != null) {
+                    unmodified.remove(rel);
+                    SpicyRelicFields.modifier.set(rel.relic, Modifiers.POTION_SACRIFICE);
+
+                    rel.price = NumberUtils.max(0, rel.price - (POT_DISCOUNT + AbstractDungeon.ascensionLevel >= 16? 0:20));
+                    rel.relic.tips.add(new PowerTip(potTrade[0], potTrade[1]));
+                }
+            }
+
+            //Unidentifiable relic
+            if(AbstractDungeon.merchantRng.randomBoolean(RELIC_MODIFIER_CHANCE)) {
+
+            }
+
+            //Hades boon relics
+            if(AbstractDungeon.merchantRng.randomBoolean(RELIC_MODIFIER_CHANCE)) {
+
             }
         }
     }
 
     @SpirePatch(clz = StoreRelic.class, method = "render")
     public static class RenderRelicSpecials {
-        private static float sparkleTimer = 0.75F;
+        private static float curseTimer = 0.75F;
+        private static float potTimer = 0.25F;
 
         @SpirePostfixPatch
         public static void patch(StoreRelic __instance, SpriteBatch sb) {
+            Color col;
+            //Cruse discount
             AbstractCard c = ShopRelicFields.bonusCard.get(__instance);
             if(c != null) {
                 if(c.type == AbstractCard.CardType.CURSE) {
@@ -66,22 +109,34 @@ public class SpicyRelicPatches {
                     c.current_y = __instance.relic.hb.y + ((__instance.relic.hb.height/2f)*__instance.relic.scale);
                     c.render(sb);
 
-                    sparkleTimer -= Gdx.graphics.getDeltaTime();
-                    if (!Settings.DISABLE_EFFECTS && sparkleTimer < 0.0F) {
-                        Color col = MathUtils.randomBoolean()?Color.FIREBRICK : Color.PURPLE;
+                    curseTimer -= Gdx.graphics.getDeltaTime();
+                    if (!Settings.DISABLE_EFFECTS && curseTimer < 0.0F) {
+                        col = MathUtils.randomBoolean()?Color.FIREBRICK : Color.PURPLE;
 
                         AbstractDungeon.topLevelEffectsQueue.add(new ConcentratedPotionEffect(__instance.relic.hb, col));
-                        sparkleTimer = MathUtils.random(0.4F, 0.65F);
+                        curseTimer = MathUtils.random(0.4F, 0.65F);
                     }
+                }
+            }
+
+            //Potion Sacrifice
+            if(SpicyRelicFields.modifier.get(__instance.relic) == Modifiers.POTION_SACRIFICE) {
+                potTimer -= Gdx.graphics.getDeltaTime();
+                if (!Settings.DISABLE_EFFECTS && potTimer < 0.0F) {
+                    col = MathUtils.randomBoolean()?Color.GRAY : Color.BROWN;
+
+                    AbstractDungeon.topLevelEffectsQueue.add(new ConcentratedPotionEffect(__instance.relic.hb, col));
+                    curseTimer = MathUtils.random(0.2F, 0.4F);
                 }
             }
         }
     }
 
     @SpirePatch(clz = StoreRelic.class, method = "purchaseRelic")
-    public static class BonusCardLogicOnRelicBuy {
+    public static class RelicBuyLogic {
         @SpireInsertPatch(locator = Locator.class)
         public static void patch(StoreRelic __instance) {
+            //Curse discount
             AbstractCard c = ShopRelicFields.bonusCard.get(__instance);
             if(c != null) {
                 if(c.type == AbstractCard.CardType.CURSE) {
@@ -89,6 +144,14 @@ public class SpicyRelicPatches {
                     ShopRelicFields.bonusCard.set(__instance, null);
                     __instance.relic.tips.removeIf(pt -> pt.header.equalsIgnoreCase(cruseTrade[0]));
                 }
+            }
+
+            switch(SpicyRelicFields.modifier.get(__instance.relic)) {
+                case POTION_SACRIFICE:
+                    __instance.relic.tips.removeIf(pt -> pt.header.equalsIgnoreCase(potTrade[0]));
+                    AbstractDungeon.player.potions.set(AbstractDungeon.player.potions.size() -1, new PotionSlot(AbstractDungeon.player.potions.size() -1));
+                    AbstractDungeon.player.potionSlots = NumberUtils.max(0, AbstractDungeon.player.potionSlots - 1);
+                    break;
             }
         }
 
@@ -100,4 +163,6 @@ public class SpicyRelicPatches {
             }
         }
     }
+
+
 }
