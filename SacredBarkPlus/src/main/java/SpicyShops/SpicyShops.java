@@ -74,7 +74,8 @@ public class SpicyShops implements
 
             @Override
             public void onLoad(Integer i) {
-                AbstractDungeon.player.potionSlots = NumberUtils.max(0, AbstractDungeon.player.potionSlots - i);
+                if(i != null)
+                    AbstractDungeon.player.potionSlots = NumberUtils.max(0, AbstractDungeon.player.potionSlots - i);
             }
         });
 

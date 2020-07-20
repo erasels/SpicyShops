@@ -22,19 +22,13 @@ public class ConcentratedPotionEffect extends AbstractGameEffect {
     private Hitbox hb;
     private TextureAtlas.AtlasRegion img;
 
-    public ConcentratedPotionEffect(float x, float y) {
-        this(null);
-        this.x = x;
-        this.y = y;
-    }
-
     public ConcentratedPotionEffect(Hitbox hb, Color c) {
         this.hb = hb;
         img = ImageMaster.GLOW_SPARK_2;
         duration = MathUtils.random(0.6F, 1F);
         scale = MathUtils.random(0.4F, 0.8F) * Settings.scale;
         dur_div2 = duration / 2.0F;
-        color = c;
+        color = c.cpy();
         oX = MathUtils.random(-25.0F, 25.0F) * Settings.scale;
         oY = MathUtils.random(-25.0F, 25.0F) * Settings.scale;
         oX -= img.packedWidth / 2.0F;
@@ -79,6 +73,7 @@ public class ConcentratedPotionEffect extends AbstractGameEffect {
                     scale * MathUtils.random(0.8F, 1.2F), rotation);
         }
         sb.setBlendFunction(770, 771);
+        sb.setColor(Color.WHITE);
     }
 
     public void dispose() {
