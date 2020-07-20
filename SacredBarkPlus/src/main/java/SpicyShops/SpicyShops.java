@@ -126,6 +126,8 @@ public class SpicyShops implements
                 vanillaCurses.add(c.cardID);
             }
         }
+
+        BaseMod.registerModBadge(TextureLoader.getTexture(makeImgPath("modBadge.png")), "Spicy Shops", "erasels", "A mod, boyo.", null);
     }
 
     @Override
@@ -164,6 +166,10 @@ public class SpicyShops implements
                 modKeywords.put(keyword.PROPER_NAME, keyword);
             }
         }
+    }
+
+    public static String makeImgPath(String resourcePath) {
+        return getModID() + "Resources/img/" + resourcePath;
     }
 
     public static String makeUIPath(String resourcePath) {
