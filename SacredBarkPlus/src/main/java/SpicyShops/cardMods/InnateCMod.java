@@ -35,7 +35,13 @@ public class InnateCMod extends AbstractSpicySaleCMod{
 
     @Override
     public boolean isApplicable(AbstractCard c) {
-        return !c.isInnate;
+        boolean check = !c.isInnate;
+        if(check && !c.upgraded) {
+            AbstractCard checkCard = c.makeCopy();
+            checkCard.upgrade();
+            check = !checkCard.isInnate;
+        }
+        return check;
     }
 
     @Override

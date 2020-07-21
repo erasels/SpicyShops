@@ -40,7 +40,13 @@ public class RetainCMod extends AbstractSpicySaleCMod{
 
     @Override
     public boolean isApplicable(AbstractCard c) {
-        return !(c.retain || c.selfRetain || c.isEthereal) && c.cost != -2;
+        boolean check = !(c.retain || c.selfRetain || c.isEthereal) && c.cost != -2;
+        if(check && !c.upgraded) {
+            AbstractCard checkCard = c.makeCopy();
+            checkCard.upgrade();
+            check = !(c.retain || c.selfRetain || c.isEthereal) && c.cost != -2;
+        }
+        return check;
     }
 
     @Override
