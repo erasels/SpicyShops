@@ -45,9 +45,11 @@ public class SpicyShops implements
     public static ArrayList<String> vanillaCurses = new ArrayList<>();
     public static HashMap<String, Keyword> modKeywords = new HashMap<>();
     public static final boolean hasHubris;
+    public static final boolean hasReplay;
 
     static {
         hasHubris = Loader.isModLoaded("hubris");
+        hasReplay = Loader.isModLoaded("ReplayTheSpireMod");
     }
 
     public static final Logger logger = LogManager.getLogger(SpicyShops.class.getName());

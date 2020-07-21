@@ -13,6 +13,7 @@ import com.megacrit.cardcrawl.audio.SoundMaster;
 import com.megacrit.cardcrawl.cards.AbstractCard;
 import com.megacrit.cardcrawl.core.Settings;
 import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
+import com.megacrit.cardcrawl.shop.OnSaleTag;
 import com.megacrit.cardcrawl.shop.ShopScreen;
 import javassist.CannotCompileException;
 import javassist.CtBehavior;
@@ -80,14 +81,15 @@ public class SpicyCardPatches {
     @SpirePatch(clz = ShopScreen.class, method = "render")
     public static class RenderSpicyCardTags {
         @SpireInsertPatch(locator = Locator.class)
-        public static void patch(ShopScreen __instance, SpriteBatch sb) {
+        public static void patch(ShopScreen __instance, SpriteBatch sb, OnSaleTag ___saleTag) {
             for (AbstractCard c : spicyCards) {
+                boolean isSale = !SpicyShops.hasReplay && ___saleTag.card == c;
                 AbstractSpicySaleCMod mod = (AbstractSpicySaleCMod) CardModifierPatches.CardModifierFields.cardModifiers.get(c).stream().filter(cmod -> cmod instanceof AbstractSpicySaleCMod).findAny().get();
                 sb.setColor(Color.WHITE);
-                sb.draw(SpicyShops.tagTextures.get(mod.getTexturePath()), c.current_x - 20f * Settings.scale + (c.drawScale - 0.75F) * 60.0F * Settings.scale, c.current_y + 60.0F * Settings.scale + (c.drawScale - 0.75F) * 90.0F * Settings.scale, 128.0F * Settings.scale * c.drawScale, 128.0F * Settings.scale * c.drawScale);
+                sb.draw(SpicyShops.tagTextures.get(mod.getTexturePath()), c.current_x + ((isSale?-20f:30f) * Settings.scale) + (c.drawScale - 0.75F) * 60.0F * Settings.scale, c.current_y + 60.0F * Settings.scale + (c.drawScale - 0.75F) * 90.0F * Settings.scale, 128.0F * Settings.scale * c.drawScale, 128.0F * Settings.scale * c.drawScale);
                 sb.setBlendFunction(770, 1);
                 sb.setColor(new Color(1.0F, 1.0F, 1.0F, (MathUtils.cosDeg((float) (System.currentTimeMillis() / 5L % 360L)) + 1.25F) / 3.0F));
-                sb.draw(SpicyShops.tagTextures.get(mod.getTexturePath()), c.current_x - 20f * Settings.scale + (c.drawScale - 0.75F) * 60.0F * Settings.scale, c.current_y + 60.0F * Settings.scale + (c.drawScale - 0.75F) * 90.0F * Settings.scale, 128.0F * Settings.scale * c.drawScale, 128.0F * Settings.scale * c.drawScale);
+                sb.draw(SpicyShops.tagTextures.get(mod.getTexturePath()), c.current_x + ((isSale?-20f:30f) * Settings.scale) + (c.drawScale - 0.75F) * 60.0F * Settings.scale, c.current_y + 60.0F * Settings.scale + (c.drawScale - 0.75F) * 90.0F * Settings.scale, 128.0F * Settings.scale * c.drawScale, 128.0F * Settings.scale * c.drawScale);
                 sb.setBlendFunction(770, 771);
                 sb.setColor(Color.WHITE);
             }
