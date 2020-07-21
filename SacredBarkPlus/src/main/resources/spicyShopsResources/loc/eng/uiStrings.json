@@ -20,7 +20,7 @@
   "spicyShops:PotionSacrifice": {
     "TEXT": [
       "Lose a Potion Slot",
-      "This relic has a large discount but you will lose a #yPotion #ySlot when buying it."
+      "This relic has a large discount but you will lose your rightmost #yPotion #ySlot when buying it."
     ]
   },
   "spicyShops:Unidentifiable": {
