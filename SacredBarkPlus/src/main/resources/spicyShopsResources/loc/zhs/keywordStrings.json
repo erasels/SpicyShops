@@ -1,0 +1,16 @@
+[
+  {
+    "PROPER_NAME": "再洗入",
+    "NAMES": [
+      "再洗入"
+    ],
+    "DESCRIPTION": "打出后，将这张牌洗入你的抽牌堆。"
+  },
+  {
+    "PROPER_NAME": "重复",
+    "NAMES": [
+      "重复"
+    ],
+    "DESCRIPTION": "重复这张牌的效果。"
+  }
+]

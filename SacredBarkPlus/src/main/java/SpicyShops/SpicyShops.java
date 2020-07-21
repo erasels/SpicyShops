@@ -18,6 +18,7 @@ import com.evacipated.cardcrawl.modthespire.lib.SpireInitializer;
 import com.google.gson.Gson;
 import com.megacrit.cardcrawl.cards.AbstractCard;
 import com.megacrit.cardcrawl.core.CardCrawlGame;
+import com.megacrit.cardcrawl.core.Settings;
 import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
 import com.megacrit.cardcrawl.helpers.CardLibrary;
 import com.megacrit.cardcrawl.localization.UIStrings;
@@ -152,13 +153,13 @@ public class SpicyShops implements
 
     @Override
     public void receiveEditStrings() {
-        BaseMod.loadCustomStringsFile(UIStrings.class, getModID() + "Resources/loc/eng/uiStrings.json");
+        BaseMod.loadCustomStringsFile(UIStrings.class, getModID() + "Resources/loc/"+locPath()+"/uiStrings.json");
     }
 
     @Override
     public void receiveEditKeywords() {
         Gson gson = new Gson();
-        String json = Gdx.files.internal(getModID() + "Resources/loc/eng/keywordStrings.json").readString(String.valueOf(StandardCharsets.UTF_8));
+        String json = Gdx.files.internal(getModID() + "Resources/loc/"+locPath()+"/keywordStrings.json").readString(String.valueOf(StandardCharsets.UTF_8));
         com.evacipated.cardcrawl.mod.stslib.Keyword[] keywords = gson.fromJson(json, com.evacipated.cardcrawl.mod.stslib.Keyword[].class);
 
         if (keywords != null) {
@@ -166,6 +167,14 @@ public class SpicyShops implements
                 BaseMod.addKeyword(getModID().toLowerCase(), keyword.PROPER_NAME, keyword.NAMES, keyword.DESCRIPTION);
                 modKeywords.put(keyword.PROPER_NAME, keyword);
             }
+        }
+    }
+
+    private static String locPath() {
+        if(Settings.language == Settings.GameLanguage.ZHS) {
+            return "zhs";
+        } else {
+            return "eng";
         }
     }
 
