@@ -2,7 +2,6 @@ package SpicyShops;
 
 import SpicyShops.cardMods.AbstractSpicySaleCMod;
 import SpicyShops.patches.SpicyPotionPatches;
-import SpicyShops.patches.SpicyRelicPatches;
 import SpicyShops.util.TextureLoader;
 import basemod.AutoAdd;
 import basemod.BaseMod;
@@ -66,7 +65,7 @@ public class SpicyShops implements
                     tagTextures.put(cmod.getTexturePath(), TextureLoader.getTexture(makeUIPath(cmod.getTexturePath()) + ".png"));
                 });
 
-        BaseMod.addSaveField("SSPotionSacrifice", new CustomSavable<Integer>() {
+        /*BaseMod.addSaveField("SSPotionSacrifice", new CustomSavable<Integer>() {
             @Override
             public Integer onSave() {
                 return Math.toIntExact(AbstractDungeon.player.relics.stream().filter(p -> SpicyRelicPatches.SpicyRelicFields.modifier.get(p) != SpicyRelicPatches.Modifiers.NONE).count());
@@ -77,7 +76,7 @@ public class SpicyShops implements
                 if(i != null)
                     AbstractDungeon.player.potionSlots = NumberUtils.max(0, AbstractDungeon.player.potionSlots - i);
             }
-        });
+        });*/
 
         BaseMod.addSaveField("SSBigPotion", new CustomSavable<List<Integer>>() {
             @Override
