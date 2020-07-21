@@ -11,6 +11,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 import com.evacipated.cardcrawl.modthespire.lib.*;
 import com.megacrit.cardcrawl.cards.AbstractCard;
+import com.megacrit.cardcrawl.characters.AbstractPlayer;
 import com.megacrit.cardcrawl.core.CardCrawlGame;
 import com.megacrit.cardcrawl.core.Settings;
 import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
@@ -31,7 +32,7 @@ public class SpicyRelicPatches {
     public enum Modifiers {
         NONE, POTION_SACRIFICE, UNIDENTIFIABLE
     }
-    private static final float RELIC_MODIFIER_CHANCE = 0.25f;
+    private static final float RELIC_MODIFIER_CHANCE = 0.33f;
     private static final float CURSE_DISCOUNT = 0.4f; //60%
     private static final int POT_DISCOUNT = 200;
     private static final float UNID_DISCOUNT = 0.5f;
@@ -43,6 +44,7 @@ public class SpicyRelicPatches {
     private static String[] unidTrade = CardCrawlGame.languagePack.getUIString(SpicyShops.makeID("Unidentifiable")).TEXT;
 
     private static Texture unidRelic = TextureLoader.getTexture(SpicyShops.makeUIPath("unidRelic.png"));
+    private static Texture sacPot = TextureLoader.getTexture(SpicyShops.makeUIPath("sacrificePotion.png"));
 
     @SpirePatch(clz = StoreRelic.class, method = SpirePatch.CLASS)
     public static class ShopRelicFields {
@@ -105,11 +107,6 @@ public class SpicyRelicPatches {
                     rel.relic.tips.add(new PowerTip(potTrade[0], potTrade[1]));
                 }
             }
-
-            //Hades boon relics
-            if(AbstractDungeon.merchantRng.randomBoolean(RELIC_MODIFIER_CHANCE)) {
-
-            }
         }
     }
 
@@ -117,6 +114,7 @@ public class SpicyRelicPatches {
     public static class RenderRelicSpecials {
         private static float curseTimer = 0.75F;
         private static float potTimer = 0.25F;
+        private static Color transluscentCol = Color.WHITE.cpy();
 
         @SpirePostfixPatch
         public static void patch(StoreRelic __instance, SpriteBatch sb) {
@@ -124,9 +122,13 @@ public class SpicyRelicPatches {
 
             //Potion Sacrifice
             if(SpicyRelicFields.modifier.get(__instance.relic) == Modifiers.POTION_SACRIFICE) {
+                transluscentCol.a = NumberUtils.min((MathUtils.cosDeg((float) (System.currentTimeMillis() / 5L % 360L)) + 1.25F) / 3F, 0.66f);
+                sb.setColor(transluscentCol);
+                sb.draw(sacPot, __instance.relic.hb.cX, __instance.relic.hb.y - 25f * Settings.scale);
+                sb.setColor(Color.WHITE);
                 potTimer -= Gdx.graphics.getDeltaTime();
                 if (!Settings.DISABLE_EFFECTS && potTimer < 0.0F) {
-                    Color col = MathUtils.randomBoolean()?Color.DARK_GRAY : Color.BROWN;
+                    Color col = MathUtils.randomBoolean()?Color.YELLOW : Color.BROWN;
 
                     AbstractDungeon.topLevelEffectsQueue.add(new ConcentratedPotionEffect(__instance.relic.hb, col));
                     potTimer = MathUtils.random(0.2F, 0.4F);
@@ -207,6 +209,23 @@ public class SpicyRelicPatches {
             @Override
             public int[] Locate(CtBehavior ctMethodToPatch) throws Exception {
                 Matcher finalMatcher = new Matcher.MethodCallMatcher(AbstractRelic.class, "flash");
+                return LineFinder.findInOrder(ctMethodToPatch, finalMatcher);
+            }
+        }
+    }
+
+    //Sacrifice Potion Slots
+    @SpirePatch(clz = CardCrawlGame.class, method = "loadPlayerSave")
+    public static class LetMeHaveNoPotionSlots {
+        @SpireInsertPatch(locator = Locator.class)
+        public static void patch(CardCrawlGame __instance, AbstractPlayer p) {
+            p.potionSlots = CardCrawlGame.saveFile.potion_slots;
+        }
+
+        private static class Locator extends SpireInsertLocator {
+            @Override
+            public int[] Locate(CtBehavior ctMethodToPatch) throws Exception {
+                Matcher finalMatcher = new Matcher.MethodCallMatcher(ArrayList.class, "clear");
                 return LineFinder.findInOrder(ctMethodToPatch, finalMatcher);
             }
         }
