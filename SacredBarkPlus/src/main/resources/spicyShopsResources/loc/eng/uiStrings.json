@@ -1,0 +1,32 @@
+{
+  "spicyShops:BigPotion": {
+    "TEXT": [
+      "Plentiful",
+      "This potion can be used twice."
+    ]
+  },
+  "spicyShops:ConcentratedPotion": {
+    "TEXT": [
+      "Concentrated",
+      "This potion is #b50% more effective."
+    ]
+  },
+  "spicyShops:CurseRelicTrade": {
+    "TEXT": [
+      "Add a Curse",
+      "This relic has a big discount but you will also get the shown #yCurse when buying it."
+    ]
+  },
+  "spicyShops:PotionSacrifice": {
+    "TEXT": [
+      "Lose a Potion Slot",
+      "This relic has a large discount but you will lose your rightmost #yPotion #ySlot when buying it."
+    ]
+  },
+  "spicyShops:Unidentifiable": {
+    "TEXT": [
+      "????",
+      "This relic is discounted but you don't know which one it is until you buy it."
+    ]
+  }
+}
