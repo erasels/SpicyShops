@@ -1,15 +1,15 @@
-# SpicyShops (https://steamcommunity.com/sharedfiles/filedetails/?id=1897335248)
-Sacred Bark is a new relic from the beta branch that doubles potion effectiveness. Potions that don't rely on numbers are sadly ignored and don't receive any benefit from this relic.
+# SpicyShops (https://steamcommunity.com/sharedfiles/filedetails/?id=2176103737)
+Are you tired of shops feeling like a waste of space when you're low on funds or not very exciting if you've already more or less gotten your deck going? Or maybe you just enjoy modded madness?
 
-This mod fixes that.
+Well, this mod will hopefully remedy that!
 
-Every potion that can't have its "potency" doubled can instead be used twice.
+Overview
+How does this mod make shops more interesting?
 
-This includes the following potions:
-Ambrosia
-Blessing of the forge
-Elixir
-Entropic Brew
-Gamblers Brew
-Smokebomb
-Stance potion
+Everything buyable in the shop has received modifiers that increase or decrease their price correlating to their effect. In addition to that, you get a bigger selection of relics and potions to peruse.
+
+The chance for these modifiers to spawn is random, the only guarantees are the increases relic and potion selection and at least 1 modified card.
+
+Although, statistically it is rather common to see at least one modified potion and relic as well as 2 cards.
+
+For examples, please look at the linked steamworkshop page.
