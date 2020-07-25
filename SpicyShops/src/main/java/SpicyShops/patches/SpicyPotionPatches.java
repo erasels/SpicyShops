@@ -126,6 +126,13 @@ public class SpicyPotionPatches {
             }
         }
 
+        @SpirePostfixPatch
+        public static void undoIncrease(AbstractPotion __instance, SpriteBatch sb) {
+            if (PotionUseField.isBig.get(__instance)) {
+                __instance.scale /= 1.5f;
+            }
+        }
+
         private static class Locator extends SpireInsertLocator {
             @Override
             public int[] Locate(CtBehavior ctMethodToPatch) throws Exception {
