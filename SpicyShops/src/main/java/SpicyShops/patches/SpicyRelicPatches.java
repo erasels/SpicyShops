@@ -16,6 +16,7 @@ import com.megacrit.cardcrawl.core.CardCrawlGame;
 import com.megacrit.cardcrawl.core.Settings;
 import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
 import com.megacrit.cardcrawl.helpers.CardLibrary;
+import com.megacrit.cardcrawl.helpers.FontHelper;
 import com.megacrit.cardcrawl.helpers.PowerTip;
 import com.megacrit.cardcrawl.relics.AbstractRelic;
 import com.megacrit.cardcrawl.screens.SingleRelicViewPopup;
@@ -74,7 +75,7 @@ public class SpicyRelicPatches {
 
                     SpicyShops.logger.info(rel.relic.name + " has a curse (" + ShopRelicFields.bonusCard.get(rel).name + ") attached to it for a discount. Original cost: " + rel.price);
                     rel.price *= CURSE_DISCOUNT;
-                    rel.relic.tips.add(new PowerTip(cruseTrade[0], cruseTrade[1]));
+                    rel.relic.tips.add(new PowerTip(cruseTrade[0], cruseTrade[1] + " NL ( " + FontHelper.colorString(ShopRelicFields.bonusCard.get(rel).name, "r") + " )"));
                 }
             }
 
@@ -158,7 +159,7 @@ public class SpicyRelicPatches {
             //Cruse discount
             else if(c != null) {
                 if(c.type == AbstractCard.CardType.CURSE) {
-                    c.drawScale = __instance.relic.scale - 0.8f;
+                    c.drawScale = __instance.relic.scale / 5f;
                     //Draw card right of the relic if unhovered and left of it, if it is hovered, so that it doesn't overlap with the powertips
                     c.current_x = __instance.relic.hb.x + (((__instance.relic.hb.width + (!__instance.relic.hb.hovered?(25f * Settings.scale):0)) * (__instance.relic.hb.hovered?-1f:1f)) * __instance.relic.scale);
                     c.current_y = __instance.relic.hb.y + ((__instance.relic.hb.height/2f)*__instance.relic.scale);
