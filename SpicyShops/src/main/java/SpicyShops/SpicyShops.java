@@ -2,6 +2,7 @@ package SpicyShops;
 
 import SpicyShops.cardMods.AbstractSpicySaleCMod;
 import SpicyShops.patches.SpicyPotionPatches;
+import SpicyShops.util.HelperClass;
 import SpicyShops.util.TextureLoader;
 import basemod.AutoAdd;
 import basemod.BaseMod;
@@ -165,7 +166,11 @@ public class SpicyShops implements
         if (keywords != null) {
             for (Keyword keyword : keywords) {
                 BaseMod.addKeyword(getModID().toLowerCase(), keyword.PROPER_NAME, keyword.NAMES, keyword.DESCRIPTION);
-                modKeywords.put(keyword.PROPER_NAME, keyword);
+                String key = keyword.PROPER_NAME;
+                if(Settings.language != Settings.GameLanguage.ENG) {
+                    key = HelperClass.capitalize(keyword.NAMES[1]);
+                }
+                modKeywords.put(key, keyword);
             }
         }
     }
