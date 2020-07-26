@@ -167,7 +167,7 @@ public class SpicyShops implements
             for (Keyword keyword : keywords) {
                 BaseMod.addKeyword(getModID().toLowerCase(), keyword.PROPER_NAME, keyword.NAMES, keyword.DESCRIPTION);
                 String key = keyword.PROPER_NAME;
-                if(Settings.language != Settings.GameLanguage.ENG) {
+                if(Settings.language != Settings.GameLanguage.ENG && keyword.NAMES.length > 1) {
                     key = HelperClass.capitalize(keyword.NAMES[1]);
                 }
                 modKeywords.put(key, keyword);
