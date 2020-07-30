@@ -40,11 +40,11 @@ public class RepeatCMod extends AbstractSpicySaleCMod{
             if(removedExhaust) {
                 tmp = rawDescription.replace(HelperClass.capitalize(GameDictionary.EXHAUST.NAMES[0]), HelperClass.capitalize(localizedPurgeName));
             } else {
-                tmp = rawDescription + " NL " + HelperClass.capitalize(localizedPurgeName) + LocalizedStrings.PERIOD;
+                tmp = rawDescription + " NL " + HelperClass.capitalize(localizedPurgeName) + " " + LocalizedStrings.PERIOD;
             }
         }
-        String rK = SpicyShops.modKeywords.get("Repeat").NAMES[0];
-        return tmp + " NL " + HelperClass.capitalize(rK, rK.substring(rK.indexOf(":") + 1)) + LocalizedStrings.PERIOD;
+        String rK = SpicyShops.modKeywords.get("spicyshops:repeat").NAMES[0];
+        return tmp + " NL " + HelperClass.capitalize(rK, rK.substring(rK.indexOf(":") + 1)) + " " + LocalizedStrings.PERIOD;
     }
 
     @Override

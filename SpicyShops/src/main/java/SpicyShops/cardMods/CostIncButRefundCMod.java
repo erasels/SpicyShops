@@ -29,7 +29,7 @@ public class CostIncButRefundCMod extends AbstractSpicySaleCMod {
 
     @Override
     public String modifyDescription(String rawDescription, AbstractCard card) {
-        return rawDescription + " NL " + localizedRefundName + " !stslib:refund!" + LocalizedStrings.PERIOD;
+        return rawDescription + " NL " + localizedRefundName + " !stslib:refund! " + LocalizedStrings.PERIOD;
     }
 
     @Override
