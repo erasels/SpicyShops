@@ -3,6 +3,7 @@ package SpicyShops.cardMods;
 import SpicyShops.SpicyShops;
 import com.badlogic.gdx.math.MathUtils;
 import com.megacrit.cardcrawl.cards.AbstractCard;
+import com.megacrit.cardcrawl.cards.blue.DoomAndGloom;
 import com.megacrit.cardcrawl.cards.blue.ThunderStrike;
 import com.megacrit.cardcrawl.cards.purple.DevaForm;
 import com.megacrit.cardcrawl.cards.purple.Halt;
@@ -12,7 +13,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class MagicCMod extends AbstractSpicySaleCMod {
-    private static ArrayList<String> excluded = new ArrayList<>(Arrays.asList(ThunderStrike.ID, DevaForm.ID, Halt.ID));
+    private static ArrayList<String> excluded = new ArrayList<>(Arrays.asList(ThunderStrike.ID, DevaForm.ID, Halt.ID, DoomAndGloom.ID));
     public static final String ID = SpicyShops.getModID() + "Magic";
 
     @Override
