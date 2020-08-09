@@ -2,18 +2,25 @@ package SpicyShops.cardMods;
 
 import SpicyShops.SpicyShops;
 import com.badlogic.gdx.math.MathUtils;
+import com.evacipated.cardcrawl.modthespire.Loader;
 import com.megacrit.cardcrawl.cards.AbstractCard;
 import com.megacrit.cardcrawl.cards.blue.DoomAndGloom;
 import com.megacrit.cardcrawl.cards.blue.ThunderStrike;
 import com.megacrit.cardcrawl.cards.purple.DevaForm;
 import com.megacrit.cardcrawl.cards.purple.Halt;
+import javassist.CannotCompileException;
+import javassist.ClassPool;
+import javassist.CtClass;
+import javassist.CtMethod;
+import javassist.expr.ExprEditor;
+import javassist.expr.FieldAccess;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 
 public class MagicCMod extends AbstractSpicySaleCMod {
-    private static ArrayList<String> excluded = new ArrayList<>(Arrays.asList(ThunderStrike.ID, DevaForm.ID, Halt.ID, DoomAndGloom.ID));
+    private static ArrayList<String> excluded = new ArrayList<>(Arrays.asList(Halt.ID));
     public static final String ID = SpicyShops.getModID() + "Magic";
 
     @Override
@@ -45,9 +52,30 @@ public class MagicCMod extends AbstractSpicySaleCMod {
         return 2f;
     }
 
+    private static boolean usesMagic;
+
     @Override
     public boolean isApplicable(AbstractCard c) {
-        return c.baseMagicNumber > 0 && StringUtils.containsIgnoreCase(c.rawDescription, "!M!") && excluded.stream().noneMatch(str -> str.equals(c.cardID));
+        usesMagic = false;
+        if (c.baseMagicNumber > 0 && StringUtils.containsIgnoreCase(c.rawDescription, "!M!") && excluded.stream().noneMatch(str -> str.equals(c.cardID))) {
+            try {
+                ClassPool pool = Loader.getClassPool();
+                CtMethod ctClass = pool.get(c.getClass().getName()).getDeclaredMethod("use");
+
+                ctClass.instrument(new ExprEditor() {
+                    @Override
+                    public void edit(FieldAccess f) {
+
+                        if (f.getFieldName().equals("magicNumber") && !f.isWriter()) {
+                            usesMagic = true;
+                        }
+
+                    }
+                });
+
+            } catch (Exception ignored) { }
+        }
+        return usesMagic;
     }
 
     @Override
