@@ -49,7 +49,7 @@ public class RepeatCMod extends AbstractSpicySaleCMod{
 
     @Override
     public float getPriceMod(AbstractCard c) {
-        return 2f + (removedExhaust || c.type == AbstractCard.CardType.POWER?0.5f:0);
+        return 2f + (removedExhaust || c.type == AbstractCard.CardType.POWER?1f:0);
     }
 
     @Override

@@ -25,7 +25,7 @@ public class RetainCMod extends AbstractSpicySaleCMod{
         if(!CommonKeywordIconsField.useIcons.get(card)) {
             if (card.isInnate) {
                 String beforeNL = rawDescription.substring(0, rawDescription.indexOf("NL"));
-                return beforeNL + "NL " + HelperClass.capitalize(GameDictionary.RETAIN.NAMES[0]) + " " + LocalizedStrings.PERIOD + " " + rawDescription.substring(rawDescription.indexOf("NL") + 1);
+                return beforeNL + "NL " + HelperClass.capitalize(GameDictionary.RETAIN.NAMES[0]) + " " + LocalizedStrings.PERIOD + " " + rawDescription.substring(rawDescription.indexOf("NL"));
             } else {
                 return HelperClass.capitalize(GameDictionary.RETAIN.NAMES[0]) + " " + LocalizedStrings.PERIOD + " NL " + rawDescription;
             }
