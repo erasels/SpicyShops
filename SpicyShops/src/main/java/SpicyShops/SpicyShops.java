@@ -18,6 +18,9 @@ import com.evacipated.cardcrawl.modthespire.Loader;
 import com.evacipated.cardcrawl.modthespire.lib.SpireInitializer;
 import com.google.gson.Gson;
 import com.megacrit.cardcrawl.cards.AbstractCard;
+import com.megacrit.cardcrawl.cards.curses.AscendersBane;
+import com.megacrit.cardcrawl.cards.curses.CurseOfTheBell;
+import com.megacrit.cardcrawl.cards.curses.Necronomicurse;
 import com.megacrit.cardcrawl.core.CardCrawlGame;
 import com.megacrit.cardcrawl.core.Settings;
 import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
@@ -125,7 +128,7 @@ public class SpicyShops implements
 
         for (AbstractCard c : CardLibrary.getCardList(CardLibrary.LibraryType.CURSE)) {
             //Remove modded curses
-            if (WhatMod.findModID(c.getClass()) == null) {
+            if (WhatMod.findModID(c.getClass()) == null && !(c instanceof AscendersBane) && !(c instanceof CurseOfTheBell) && !(c instanceof Necronomicurse)) {
                 vanillaCurses.add(c.cardID);
             }
         }
