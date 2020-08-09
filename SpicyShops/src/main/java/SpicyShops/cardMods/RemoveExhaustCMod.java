@@ -24,7 +24,7 @@ public class RemoveExhaustCMod extends AbstractSpicySaleCMod{
     @Override
     public String modifyDescription(String rawDescription, AbstractCard card) {
         if(!CommonKeywordIconsField.useIcons.get(card)) {
-            return rawDescription.replace("NL " + HelperClass.capitalize(GameDictionary.EXHAUST.NAMES[0]) + " " + LocalizedStrings.PERIOD, "");
+            return rawDescription.replace("NL " + HelperClass.capitalize(GameDictionary.EXHAUST.NAMES[0]) + " " + LocalizedStrings.PERIOD, "").replace("NL " + HelperClass.capitalize(GameDictionary.EXHAUST.NAMES[0]) + LocalizedStrings.PERIOD, "");
         }
         return rawDescription;
     }
