@@ -6,6 +6,7 @@ import com.evacipated.cardcrawl.modthespire.Loader;
 import com.megacrit.cardcrawl.cards.AbstractCard;
 import com.megacrit.cardcrawl.cards.blue.DoomAndGloom;
 import com.megacrit.cardcrawl.cards.blue.ThunderStrike;
+import com.megacrit.cardcrawl.cards.colorless.PanicButton;
 import com.megacrit.cardcrawl.cards.purple.DevaForm;
 import com.megacrit.cardcrawl.cards.purple.Halt;
 import javassist.CannotCompileException;
@@ -20,7 +21,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class MagicCMod extends AbstractSpicySaleCMod {
-    private static ArrayList<String> excluded = new ArrayList<>(Arrays.asList(Halt.ID));
+    private static ArrayList<String> excluded = new ArrayList<>(Arrays.asList(Halt.ID, PanicButton.ID));
     public static final String ID = SpicyShops.getModID() + "Magic";
 
     @Override
