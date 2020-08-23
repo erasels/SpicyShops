@@ -49,7 +49,7 @@ public class SpicyPotionPatches {
             }
         }
 
-        private static ArrayList<String> exclusions = new ArrayList<>(Arrays.asList(Ambrosia.POTION_ID, BlessingOfTheForge.POTION_ID, Elixir.POTION_ID, EntropicBrew.POTION_ID, GamblersBrew.POTION_ID, SmokeBomb.POTION_ID, StancePotion.POTION_ID, AttackPotion.POTION_ID, PowerPotion.POTION_ID, SkillPotion.POTION_ID, ColorlessPotion.POTION_ID));
+        private static ArrayList<String> exclusions = new ArrayList<>(Arrays.asList(Ambrosia.POTION_ID, BlessingOfTheForge.POTION_ID, Elixir.POTION_ID, EntropicBrew.POTION_ID, GamblersBrew.POTION_ID, SmokeBomb.POTION_ID, StancePotion.POTION_ID, AttackPotion.POTION_ID, PowerPotion.POTION_ID, SkillPotion.POTION_ID, ColorlessPotion.POTION_ID, LiquidMemories.POTION_ID));
         private static boolean canBeConcentrated(AbstractPotion p) {
             return !exclusions.contains(p.ID);
         }
