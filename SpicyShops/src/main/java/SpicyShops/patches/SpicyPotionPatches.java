@@ -16,6 +16,7 @@ import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
 import com.megacrit.cardcrawl.helpers.FontHelper;
 import com.megacrit.cardcrawl.helpers.PowerTip;
 import com.megacrit.cardcrawl.potions.*;
+import com.megacrit.cardcrawl.relics.SacredBark;
 import com.megacrit.cardcrawl.shop.ShopScreen;
 import com.megacrit.cardcrawl.shop.StorePotion;
 import com.megacrit.cardcrawl.ui.panels.PotionPopUp;
@@ -49,9 +50,11 @@ public class SpicyPotionPatches {
             }
         }
 
-        private static ArrayList<String> exclusions = new ArrayList<>(Arrays.asList(Ambrosia.POTION_ID, BlessingOfTheForge.POTION_ID, Elixir.POTION_ID, EntropicBrew.POTION_ID, GamblersBrew.POTION_ID, SmokeBomb.POTION_ID, StancePotion.POTION_ID, AttackPotion.POTION_ID, PowerPotion.POTION_ID, SkillPotion.POTION_ID, ColorlessPotion.POTION_ID, LiquidMemories.POTION_ID));
+        private static ArrayList<String> exclusions = new ArrayList<>(Arrays.asList(Ambrosia.POTION_ID, BlessingOfTheForge.POTION_ID, Elixir.POTION_ID, EntropicBrew.POTION_ID, GamblersBrew.POTION_ID, SmokeBomb.POTION_ID, StancePotion.POTION_ID, AttackPotion.POTION_ID, PowerPotion.POTION_ID, SkillPotion.POTION_ID, ColorlessPotion.POTION_ID));
+        private static ArrayList<String> onlyWithSacredbark = new ArrayList<>(Arrays.asList(LiquidMemories.POTION_ID, CultistPotion.POTION_ID, GhostInAJar.POTION_ID,AncientPotion.POTION_ID, DuplicationPotion.POTION_ID, EssenceOfDarkness.POTION_ID));
+
         private static boolean canBeConcentrated(AbstractPotion p) {
-            return !exclusions.contains(p.ID);
+            return !exclusions.contains(p.ID) && (!onlyWithSacredbark.contains(p.ID) || AbstractDungeon.player.hasRelic(SacredBark.ID));
         }
     }
 
