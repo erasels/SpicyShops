@@ -6,6 +6,7 @@ import com.evacipated.cardcrawl.mod.stslib.fields.cards.AbstractCard.CommonKeywo
 import com.megacrit.cardcrawl.cards.AbstractCard;
 import com.megacrit.cardcrawl.helpers.GameDictionary;
 import com.megacrit.cardcrawl.localization.LocalizedStrings;
+import org.apache.commons.lang3.math.NumberUtils;
 
 public class RetainCMod extends AbstractSpicySaleCMod{
     public static final String ID = SpicyShops.getModID()+"Retain";
@@ -24,7 +25,7 @@ public class RetainCMod extends AbstractSpicySaleCMod{
     public String modifyDescription(String rawDescription, AbstractCard card) {
         if(!CommonKeywordIconsField.useIcons.get(card)) {
             if (card.isInnate) {
-                String beforeNL = rawDescription.substring(0, rawDescription.indexOf("NL"));
+                String beforeNL = rawDescription.substring(0, NumberUtils.max(rawDescription.indexOf("NL"), 0));
                 return beforeNL + "NL " + HelperClass.capitalize(GameDictionary.RETAIN.NAMES[0]) + " " + LocalizedStrings.PERIOD + " " + rawDescription.substring(rawDescription.indexOf("NL"));
             } else {
                 return HelperClass.capitalize(GameDictionary.RETAIN.NAMES[0]) + " " + LocalizedStrings.PERIOD + " NL " + rawDescription;
