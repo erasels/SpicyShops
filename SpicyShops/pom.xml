@@ -6,7 +6,7 @@
     <groupId>UpdateBodyText</groupId>
     <artifactId>spicyShops</artifactId>
     <name>Spicy Shops</name>
-    <version>1.1.1</version>
+    <version>1.2.1</version>
     <description>Makes shops more interesting by adding modifiers to cards, potions and relics.</description>
 
     <properties>
