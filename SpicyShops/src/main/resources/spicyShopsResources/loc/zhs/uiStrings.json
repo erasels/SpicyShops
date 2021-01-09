@@ -1,35 +1,35 @@
 {
-  "spicyShops:BigPotion": {
+  "${ModID}:BigPotion": {
     "TEXT": [
       "充裕",
       "这瓶药水能被使用两次。"
     ]
   },
-  "spicyShops:ConcentratedPotion": {
+  "${ModID}:ConcentratedPotion": {
     "TEXT": [
       "浓缩",
       "这瓶药水效果提高 #b50% 。"
     ]
   },
-  "spicyShops:CurseRelicTrade": {
+  "${ModID}:CurseRelicTrade": {
     "TEXT": [
       "获得诅咒",
       "这件遗物非常便宜，但购买时会获得一张 #y诅咒 。"
     ]
   },
-  "spicyShops:PotionSacrifice": {
+  "${ModID}:PotionSacrifice": {
     "TEXT": [
       "失去药水栏位",
       "这件遗物非常便宜，但购买时会失去你最右侧的 #y药水栏位 。"
     ]
   },
-  "spicyShops:Unidentifiable": {
+  "${ModID}:Unidentifiable": {
     "TEXT": [
       "？？？？",
       "这件遗物非常便宜，但是你买之前并不知道它是什么。"
     ]
   },
-  "spicyShops:OptionsMenu": {
+  "${ModID}:OptionsMenu": {
     "TEXT": [
       "Allow the following card modifiers to spawn in shops:"
     ]

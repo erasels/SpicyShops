@@ -6,10 +6,11 @@
     <groupId>UpdateBodyText</groupId>
     <artifactId>spicyShops</artifactId>
     <name>Spicy Shops</name>
-    <version>1.2.1</version>
+    <version>1.2.2</version>
     <description>Makes shops more interesting by adding modifiers to cards, potions and relics.</description>
 
     <properties>
+        <ModID>spicyShops</ModID>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
         <SlayTheSpire.version>01-23-2019</SlayTheSpire.version>
@@ -104,14 +105,20 @@
                 <directory>src/main/resources</directory>
                 <filtering>false</filtering>
                 <excludes>
+                    <!-- Exclude these files from being processed normally without the project variables defined above !-->
+                    <exclude>${ModID}Resources/**/*.json</exclude>
                     <exclude>ModTheSpire.json</exclude>
+                    <!-- Do not package pdn files!-->
+                    <exclude>**/*.pdn</exclude>
                 </excludes>
             </resource>
             <resource>
                 <directory>src/main/resources</directory>
                 <filtering>true</filtering>
                 <includes>
+                    <!-- Include these files for being processed with the project variables defined above !-->
                     <include>ModTheSpire.json</include>
+                    <include>${ModID}Resources/**/*.json</include>
                 </includes>
             </resource>
         </resources>
