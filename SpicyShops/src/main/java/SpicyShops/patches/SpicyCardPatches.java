@@ -40,7 +40,7 @@ public class SpicyCardPatches {
 
                 ArrayList<AbstractSpicySaleCMod> applicable = new ArrayList<>();
                 for (AbstractSpicySaleCMod cmod: SpicyShops.cardMods) {
-                    if(cmod.isApplicable(c)) {
+                    if(SpicyShops.enabledCMods.get(cmod.id()) && cmod.isApplicable(c)) {
                         applicable.add(cmod);
                     }
                 }

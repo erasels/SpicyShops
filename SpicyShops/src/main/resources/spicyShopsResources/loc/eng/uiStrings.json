@@ -28,5 +28,10 @@
       "????",
       "This relic is discounted but you don't know which one it is until you buy it."
     ]
+  },
+  "spicyShops:OptionsMenu": {
+    "TEXT": [
+      "Allow the following card modifiers to spawn in shops:"
+    ]
   }
 }

@@ -4,8 +4,7 @@ import SpicyShops.cardMods.AbstractSpicySaleCMod;
 import SpicyShops.patches.SpicyPotionPatches;
 import SpicyShops.util.HelperClass;
 import SpicyShops.util.TextureLoader;
-import basemod.AutoAdd;
-import basemod.BaseMod;
+import basemod.*;
 import basemod.abstracts.CustomSavable;
 import basemod.interfaces.*;
 import basemod.patches.whatmod.WhatMod;
@@ -15,6 +14,7 @@ import com.evacipated.cardcrawl.mod.hubris.patches.potions.AbstractPotion.Potion
 import com.evacipated.cardcrawl.mod.hubris.relics.EmptyBottle;
 import com.evacipated.cardcrawl.mod.stslib.Keyword;
 import com.evacipated.cardcrawl.modthespire.Loader;
+import com.evacipated.cardcrawl.modthespire.lib.SpireConfig;
 import com.evacipated.cardcrawl.modthespire.lib.SpireInitializer;
 import com.google.gson.Gson;
 import com.megacrit.cardcrawl.cards.AbstractCard;
@@ -25,6 +25,7 @@ import com.megacrit.cardcrawl.core.CardCrawlGame;
 import com.megacrit.cardcrawl.core.Settings;
 import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
 import com.megacrit.cardcrawl.helpers.CardLibrary;
+import com.megacrit.cardcrawl.helpers.FontHelper;
 import com.megacrit.cardcrawl.localization.UIStrings;
 import com.megacrit.cardcrawl.potions.AbstractPotion;
 import com.megacrit.cardcrawl.relics.AbstractRelic;
@@ -32,10 +33,9 @@ import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @SpireInitializer
@@ -45,7 +45,9 @@ public class SpicyShops implements
         PostUpdateSubscriber,
         RelicGetSubscriber,
         EditKeywordsSubscriber {
+    private static SpireConfig modConfig = null;
     public static ArrayList<AbstractSpicySaleCMod> cardMods = new ArrayList<>();
+    public static HashMap<String, Boolean> enabledCMods = new HashMap<>();
     public static HashMap<String, Texture> tagTextures = new HashMap<>();
     public static ArrayList<String> vanillaCurses = new ArrayList<>();
     public static HashMap<String, Keyword> modKeywords = new HashMap<>();
@@ -63,27 +65,56 @@ public class SpicyShops implements
         BaseMod.subscribe(new SpicyShops());
     }
 
+    private ModPanel settingsPanel;
+    private float xPos = 350f, yPos = 750f;
     @Override
     public void receivePostInitialize() {
+        UIStrings UIStrings = CardCrawlGame.languagePack.getUIString(makeID("OptionsMenu"));
+        String[] TEXT = UIStrings.TEXT;
+        settingsPanel = new ModPanel();
+
         new AutoAdd(getModID())
                 .packageFilter("SpicyShops.cardMods")
                 .any(AbstractSpicySaleCMod.class, (info, cmod) -> {
                     cardMods.add(cmod);
+                    enabledCMods.put(cmod.id(), true);
                     tagTextures.put(cmod.getTexturePath(), TextureLoader.getTexture(makeUIPath(cmod.getTexturePath()) + ".png"));
                 });
 
-        /*BaseMod.addSaveField("SSPotionSacrifice", new CustomSavable<Integer>() {
-            @Override
-            public Integer onSave() {
-                return Math.toIntExact(AbstractDungeon.player.relics.stream().filter(p -> SpicyRelicPatches.SpicyRelicFields.modifier.get(p) != SpicyRelicPatches.Modifiers.NONE).count());
+        //Populate defaults, load saved values and overwrite hashmap with saved values
+        try {
+            Properties defaults = new Properties();
+            for(Map.Entry<String, Boolean> e : enabledCMods.entrySet()) {
+                defaults.put(e.getKey(), Boolean.toString(true));
             }
+            modConfig = new SpireConfig("MintySpire", "Config", defaults);
+            for(Map.Entry<String, Boolean> e : enabledCMods.entrySet()) {
+                e.setValue(modConfig.getBool(e.getKey()));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
-            @Override
-            public void onLoad(Integer i) {
-                if(i != null)
-                    AbstractDungeon.player.potionSlots = NumberUtils.max(0, AbstractDungeon.player.potionSlots - i);
-            }
-        });*/
+        settingsPanel.addUIElement(new ModLabel(TEXT[0], xPos, yPos, Settings.CREAM_COLOR, settingsPanel, click -> {}));
+        yPos -= 50f;
+
+        //Create buttons for the CardMods
+        for(Map.Entry<String, Boolean> e : enabledCMods.entrySet()) {
+            String name = e.getKey();
+            name = name.replace(SpicyShops.getModID(), "");
+            settingsPanel.addUIElement(new ModLabeledToggleButton(name, xPos, yPos, Settings.CREAM_COLOR, FontHelper.charDescFont, modConfig.getBool(e.getKey()), settingsPanel, l -> { },
+                    button ->
+                    {
+                        if (modConfig != null) {
+                            modConfig.setBool(e.getKey(), button.enabled);
+                            e.setValue(button.enabled);
+                            saveConfig();
+                        }
+                    })
+            );
+
+            yPos-=50f;
+        }
 
         AbstractSpicySaleCMod.receivePostInit();
 
@@ -135,7 +166,7 @@ public class SpicyShops implements
             }
         }
 
-        BaseMod.registerModBadge(TextureLoader.getTexture(makeImgPath("modBadge.png")), "Spicy Shops", "erasels", "A mod, boyo.", null);
+        BaseMod.registerModBadge(TextureLoader.getTexture(makeImgPath("modBadge.png")), "Spicy Shops", "erasels", "A mod, boyo.", settingsPanel);
     }
 
     @Override
@@ -199,4 +230,13 @@ public class SpicyShops implements
     public static String makeID(String input) {
         return getModID() + ":" + input;
     }
+
+    private void saveConfig() {
+        try {
+            modConfig.save();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 }

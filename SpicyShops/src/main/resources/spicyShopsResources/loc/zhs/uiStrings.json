@@ -28,5 +28,10 @@
       "？？？？",
       "这件遗物非常便宜，但是你买之前并不知道它是什么。"
     ]
+  },
+  "spicyShops:OptionsMenu": {
+    "TEXT": [
+      "Allow the following card modifiers to spawn in shops:"
+    ]
   }
 }
