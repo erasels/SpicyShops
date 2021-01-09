@@ -95,7 +95,7 @@ public class SpicyShops implements
             e.printStackTrace();
         }
 
-        settingsPanel.addUIElement(new ModLabel(TEXT[0], xPos, yPos, Settings.CREAM_COLOR, settingsPanel, click -> {}));
+        settingsPanel.addUIElement(new ModLabel(TEXT[0], xPos + 5f, yPos, Settings.CREAM_COLOR, settingsPanel, click -> {}));
         yPos -= 50f;
 
         //Create buttons for the CardMods
