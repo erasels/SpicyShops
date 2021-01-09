@@ -2,8 +2,10 @@ package SpicyShops.cardMods;
 
 import basemod.abstracts.AbstractCardModifier;
 import com.megacrit.cardcrawl.cards.AbstractCard;
+import com.megacrit.cardcrawl.core.Settings;
 
 public abstract class AbstractSpicySaleCMod extends AbstractCardModifier {
+    public static String SPACE;
 
     public abstract float getPriceMod(AbstractCard c);
 
@@ -21,5 +23,9 @@ public abstract class AbstractSpicySaleCMod extends AbstractCardModifier {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public static void receivePostInit() {
+        SPACE = Settings.lineBreakViaCharacter? " " : "";
     }
 }

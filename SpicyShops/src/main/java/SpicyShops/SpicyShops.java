@@ -85,6 +85,8 @@ public class SpicyShops implements
             }
         });*/
 
+        AbstractSpicySaleCMod.receivePostInit();
+
         BaseMod.addSaveField("SSBigPotion", new CustomSavable<List<Integer>>() {
             @Override
             public List<Integer> onSave() {

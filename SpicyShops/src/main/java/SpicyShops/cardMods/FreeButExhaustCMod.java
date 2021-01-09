@@ -22,7 +22,7 @@ public class FreeButExhaustCMod extends AbstractSpicySaleCMod {
 
     @Override
     public String modifyDescription(String rawDescription, AbstractCard card) {
-        return rawDescription + (!CommonKeywordIconsField.useIcons.get(card)?" NL " + HelperClass.capitalize(GameDictionary.EXHAUST.NAMES[0] + " " + LocalizedStrings.PERIOD):"");
+        return rawDescription + (!CommonKeywordIconsField.useIcons.get(card)?" NL " + HelperClass.capitalize(GameDictionary.EXHAUST.NAMES[0] + SPACE + LocalizedStrings.PERIOD):"");
     }
 
     @Override

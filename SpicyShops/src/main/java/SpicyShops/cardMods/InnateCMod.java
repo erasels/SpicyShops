@@ -23,7 +23,7 @@ public class InnateCMod extends AbstractSpicySaleCMod{
     @Override
     public String modifyDescription(String rawDescription, AbstractCard card) {
         if(!CommonKeywordIconsField.useIcons.get(card)) {
-            return HelperClass.capitalize(GameDictionary.INNATE.NAMES[0]) + " " + LocalizedStrings.PERIOD + " NL " + rawDescription;
+            return HelperClass.capitalize(GameDictionary.INNATE.NAMES[0]) + SPACE + LocalizedStrings.PERIOD + " NL " + rawDescription;
         }
         return rawDescription;
     }

@@ -26,9 +26,9 @@ public class RetainCMod extends AbstractSpicySaleCMod{
         if(!CommonKeywordIconsField.useIcons.get(card)) {
             if (card.isInnate) {
                 String beforeNL = rawDescription.substring(0, NumberUtils.max(rawDescription.indexOf("NL"), 0));
-                return beforeNL + "NL " + HelperClass.capitalize(GameDictionary.RETAIN.NAMES[0]) + " " + LocalizedStrings.PERIOD + " " + rawDescription.substring(rawDescription.indexOf("NL"));
+                return beforeNL + "NL " + HelperClass.capitalize(GameDictionary.RETAIN.NAMES[0]) + SPACE + LocalizedStrings.PERIOD + " " + rawDescription.substring(rawDescription.indexOf("NL"));
             } else {
-                return HelperClass.capitalize(GameDictionary.RETAIN.NAMES[0]) + " " + LocalizedStrings.PERIOD + " NL " + rawDescription;
+                return HelperClass.capitalize(GameDictionary.RETAIN.NAMES[0]) + SPACE + LocalizedStrings.PERIOD + " NL " + rawDescription;
             }
         }
         return rawDescription;
@@ -36,7 +36,7 @@ public class RetainCMod extends AbstractSpicySaleCMod{
 
     @Override
     public float getPriceMod(AbstractCard c) {
-        return 1.5f;
+        return 1.4f;
     }
 
     @Override
