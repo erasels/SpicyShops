@@ -83,7 +83,7 @@ public class SpicyCardPatches {
         @SpireInsertPatch(locator = Locator.class)
         public static void patch(ShopScreen __instance, SpriteBatch sb, OnSaleTag ___saleTag) {
             for (AbstractCard c : spicyCards) {
-                boolean isSale = !SpicyShops.hasReplay && ___saleTag.card == c;
+                boolean isSale = SpicyShops.hasReplay || ___saleTag.card == c;
                 AbstractSpicySaleCMod mod = (AbstractSpicySaleCMod) CardModifierPatches.CardModifierFields.cardModifiers.get(c).stream().filter(cmod -> cmod instanceof AbstractSpicySaleCMod).findAny().get();
                 sb.setColor(Color.WHITE);
                 sb.draw(SpicyShops.tagTextures.get(mod.getTexturePath()), c.current_x + ((isSale?-20f:30f) * Settings.scale) + (c.drawScale - 0.75F) * 60.0F * Settings.scale, c.current_y + 60.0F * Settings.scale + (c.drawScale - 0.75F) * 90.0F * Settings.scale, 128.0F * Settings.scale * c.drawScale, 128.0F * Settings.scale * c.drawScale);
