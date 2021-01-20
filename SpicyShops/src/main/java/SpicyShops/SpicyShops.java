@@ -69,8 +69,6 @@ public class SpicyShops implements
     private float xPos = 350f, yPos = 750f;
     @Override
     public void receivePostInitialize() {
-        UIStrings UIStrings = CardCrawlGame.languagePack.getUIString(makeID("OptionsMenu"));
-        String[] TEXT = UIStrings.TEXT;
         settingsPanel = new ModPanel();
 
         new AutoAdd(getModID())
@@ -95,7 +93,17 @@ public class SpicyShops implements
             e.printStackTrace();
         }
 
-        settingsPanel.addUIElement(new ModLabel(TEXT[0], xPos + 5f, yPos, Settings.CREAM_COLOR, settingsPanel, click -> {}));
+        UIStrings uiStrings = CardCrawlGame.languagePack.getUIString(makeID("Config"));
+        //UI Strings is cached and new changes don't get loaded for some reason
+        Map<String, String> TEXT = new HashMap<>();
+        if(uiStrings != null) {
+            TEXT = uiStrings.TEXT_DICT;
+        } else {
+            logger.info("uiStrings were cached and had to be hardcoded. No localization for the config menu.");
+            TEXT.put("CMODS", "Allow the following card modifiers to spawn in shops:");
+        }
+
+        settingsPanel.addUIElement(new ModLabel(TEXT.get("CMODS"), xPos + 5f, yPos, Settings.CREAM_COLOR, settingsPanel, click -> {}));
         yPos -= 50f;
 
         //Create buttons for the CardMods

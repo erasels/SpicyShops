@@ -1,4 +1,9 @@
 {
+  "${ModID}:Config": {
+    "TEXT_DICT": {
+      "CMODS": "Allow the following card modifiers to spawn in shops:"
+    }
+  },
   "${ModID}:BigPotion": {
     "TEXT": [
       "Plentiful",
@@ -27,11 +32,6 @@
     "TEXT": [
       "????",
       "This relic is discounted but you don't know which one it is until you buy it."
-    ]
-  },
-  "${ModID}:OptionsMenu": {
-    "TEXT": [
-      "Allow the following card modifiers to spawn in shops:"
     ]
   }
 }
