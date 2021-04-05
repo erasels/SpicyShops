@@ -67,6 +67,7 @@ public class SpicyShops implements
 
     private ModPanel settingsPanel;
     private float xPos = 350f, yPos = 750f;
+
     @Override
     public void receivePostInitialize() {
         settingsPanel = new ModPanel();
@@ -82,11 +83,11 @@ public class SpicyShops implements
         //Populate defaults, load saved values and overwrite hashmap with saved values
         try {
             Properties defaults = new Properties();
-            for(Map.Entry<String, Boolean> e : enabledCMods.entrySet()) {
+            for (Map.Entry<String, Boolean> e : enabledCMods.entrySet()) {
                 defaults.put(e.getKey(), Boolean.toString(true));
             }
             modConfig = new SpireConfig("MintySpire", "Config", defaults);
-            for(Map.Entry<String, Boolean> e : enabledCMods.entrySet()) {
+            for (Map.Entry<String, Boolean> e : enabledCMods.entrySet()) {
                 e.setValue(modConfig.getBool(e.getKey()));
             }
         } catch (Exception e) {
@@ -96,32 +97,34 @@ public class SpicyShops implements
         UIStrings uiStrings = CardCrawlGame.languagePack.getUIString(makeID("Config"));
         //UI Strings is cached and new changes don't get loaded for some reason
         Map<String, String> TEXT = new HashMap<>();
-        if(uiStrings != null) {
+        if (uiStrings != null) {
             TEXT = uiStrings.TEXT_DICT;
         } else {
             logger.info("uiStrings were cached and had to be hardcoded. No localization for the config menu.");
             TEXT.put("CMODS", "Allow the following card modifiers to spawn in shops:");
         }
 
-        settingsPanel.addUIElement(new ModLabel(TEXT.get("CMODS"), xPos + 5f, yPos, Settings.CREAM_COLOR, settingsPanel, click -> {}));
+        settingsPanel.addUIElement(new ModLabel(TEXT.get("CMODS"), xPos + 5f, yPos, Settings.CREAM_COLOR, settingsPanel, click -> {
+        }));
         yPos -= 50f;
 
         //Create buttons for the CardMods
-        for(Map.Entry<String, Boolean> e : enabledCMods.entrySet()) {
+        for (Map.Entry<String, Boolean> e : enabledCMods.entrySet()) {
             String name = e.getKey();
             name = name.replace(SpicyShops.getModID(), "");
-            settingsPanel.addUIElement(new ModLabeledToggleButton(name, xPos, yPos, Settings.CREAM_COLOR, FontHelper.charDescFont, modConfig.getBool(e.getKey()), settingsPanel, l -> { },
-                    button ->
-                    {
-                        if (modConfig != null) {
-                            modConfig.setBool(e.getKey(), button.enabled);
-                            e.setValue(button.enabled);
-                            saveConfig();
-                        }
-                    })
+            settingsPanel.addUIElement(new ModLabeledToggleButton(name, xPos, yPos, Settings.CREAM_COLOR, FontHelper.charDescFont, modConfig.getBool(e.getKey()), settingsPanel, l -> {
+                    },
+                            button ->
+                            {
+                                if (modConfig != null) {
+                                    modConfig.setBool(e.getKey(), button.enabled);
+                                    e.setValue(button.enabled);
+                                    saveConfig();
+                                }
+                            })
             );
 
-            yPos-=50f;
+            yPos -= 50f;
         }
 
         AbstractSpicySaleCMod.receivePostInit();
@@ -198,26 +201,28 @@ public class SpicyShops implements
 
     @Override
     public void receiveEditStrings() {
-        BaseMod.loadCustomStringsFile(UIStrings.class, getModID() + "Resources/loc/"+locPath()+"/uiStrings.json");
+        BaseMod.loadCustomStringsFile(UIStrings.class, getModID() + "Resources/loc/" + locPath() + "/uiStrings.json");
     }
 
     @Override
     public void receiveEditKeywords() {
         Gson gson = new Gson();
-        String json = Gdx.files.internal(getModID() + "Resources/loc/"+locPath()+"/keywordStrings.json").readString(String.valueOf(StandardCharsets.UTF_8));
+        String json = Gdx.files.internal(getModID() + "Resources/loc/" + locPath() + "/keywordStrings.json").readString(String.valueOf(StandardCharsets.UTF_8));
         com.evacipated.cardcrawl.mod.stslib.Keyword[] keywords = gson.fromJson(json, com.evacipated.cardcrawl.mod.stslib.Keyword[].class);
 
         if (keywords != null) {
             for (Keyword keyword : keywords) {
                 BaseMod.addKeyword(getModID().toLowerCase(), keyword.PROPER_NAME, keyword.NAMES, keyword.DESCRIPTION);
-                modKeywords.put((keyword.NAMES.length > 1?keyword.NAMES[1]:keyword.NAMES[0]), keyword);
+                modKeywords.put((keyword.NAMES.length > 1 ? keyword.NAMES[1] : keyword.NAMES[0]), keyword);
             }
         }
     }
 
     private static String locPath() {
-        if(Settings.language == Settings.GameLanguage.ZHS) {
+        if (Settings.language == Settings.GameLanguage.ZHS) {
             return "zhs";
+        } else if (Settings.language == Settings.GameLanguage.FRA) {
+            return "fra";
         } else {
             return "eng";
         }

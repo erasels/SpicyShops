@@ -1,0 +1,37 @@
+{
+  "${ModID}:Config": {
+    "TEXT_DICT": {
+      "CMODS": "Autorise les modifications suivantes sur les cartes du marchand:"
+    }
+  },
+  "${ModID}:BigPotion": {
+    "TEXT": [
+      "Copieuse",
+      "Cette potion peut être jouée deux fois."
+    ]
+  },
+  "${ModID}:ConcentratedPotion": {
+    "TEXT": [
+      "Concentrée",
+      "Cette potion est #b50% plus éfficace."
+    ]
+  },
+  "${ModID}:CurseRelicTrade": {
+    "TEXT": [
+      "Maudite",
+      "Cette relique est beaucoup moins chère mais elle est accompagnée d'une #yMalédiction à son achat."
+    ]
+  },
+  "${ModID}:PotionSacrifice": {
+    "TEXT": [
+      "Perte d'un emplacement de potion",
+      "Cette relique est beaucoup moins chère mais vous perdrez votre #yEmplacement #yde #ypotion le plus à droite à son achat."
+    ]
+  },
+  "${ModID}:Unidentifiable": {
+    "TEXT": [
+      "????",
+      "Cette relique est en promotion mais vous ne connaitrez son pouvoir qu'une fois achetée."
+    ]
+  }
+}

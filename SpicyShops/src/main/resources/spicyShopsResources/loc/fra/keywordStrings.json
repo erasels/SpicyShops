@@ -1,0 +1,16 @@
+[
+  {
+    "PROPER_NAME": "Reshuffle",
+    "NAMES": [
+      "Rebattable"
+    ],
+    "DESCRIPTION": "Lorsque cette carte est jouée elle rebattue dans votre pioche."
+  },
+  {
+    "PROPER_NAME": "Repeat",
+    "NAMES": [
+      "Répétée"
+    ],
+    "DESCRIPTION": "Répète l'effet de cette carte une fois jouée."
+  }
+]
