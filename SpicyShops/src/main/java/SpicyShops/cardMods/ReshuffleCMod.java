@@ -26,12 +26,18 @@ public class ReshuffleCMod extends AbstractSpicySaleCMod{
 
     @Override
     public float getPriceMod(AbstractCard c) {
-        return 1.3f;
+        return 1.25f;
     }
 
     @Override
     public boolean isApplicable(AbstractCard c) {
-        return !(c.exhaust || c.type == AbstractCard.CardType.POWER) && c.cost != -2;
+        boolean check = !(c.exhaust || c.type == AbstractCard.CardType.POWER || c.shuffleBackIntoDrawPile) && c.cost != -2;
+        if(check && !c.upgraded) {
+            AbstractCard checkCard = c.makeCopy();
+            checkCard.upgrade();
+            check = !(c.exhaust || c.type == AbstractCard.CardType.POWER || c.shuffleBackIntoDrawPile) && c.cost != -2;
+        }
+        return check;
     }
 
     @Override
