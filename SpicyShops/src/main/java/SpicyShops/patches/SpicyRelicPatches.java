@@ -194,8 +194,11 @@ public class SpicyRelicPatches {
             switch(SpicyRelicFields.modifier.get(__instance.relic)) {
                 case POTION_SACRIFICE:
                     __instance.relic.tips.removeIf(pt -> pt.header.equalsIgnoreCase(potTrade[0]));
-                    AbstractDungeon.player.potions.remove(AbstractDungeon.player.potions.size() -1);
-                    AbstractDungeon.player.potionSlots = NumberUtils.max(0, AbstractDungeon.player.potionSlots - 1);
+                    if(!AbstractDungeon.player.potions.isEmpty()) {
+                        AbstractDungeon.topPanel.destroyPotion(AbstractDungeon.player.potions.size() - 1);
+                        AbstractDungeon.player.potions.remove(AbstractDungeon.player.potions.size() - 1);
+                        AbstractDungeon.player.potionSlots = NumberUtils.max(0, AbstractDungeon.player.potionSlots - 1);
+                    }
                     break;
                 case UNIDENTIFIABLE:
                     __instance.relic.tips.clear();
