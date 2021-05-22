@@ -4,6 +4,7 @@ import SpicyShops.SpicyShops;
 import SpicyShops.patches.cards.RepeatKeywordPatches;
 import SpicyShops.util.HelperClass;
 import com.evacipated.cardcrawl.mod.stslib.fields.cards.AbstractCard.CommonKeywordIconsField;
+import com.evacipated.cardcrawl.mod.stslib.fields.cards.AbstractCard.ExhaustiveField;
 import com.evacipated.cardcrawl.mod.stslib.patches.CommonKeywordIconsPatches;
 import com.megacrit.cardcrawl.cards.AbstractCard;
 import com.megacrit.cardcrawl.helpers.GameDictionary;
@@ -54,7 +55,7 @@ public class RepeatCMod extends AbstractSpicySaleCMod{
 
     @Override
     public boolean isApplicable(AbstractCard c) {
-        return c.cost != -2;
+        return c.cost != -2 && ExhaustiveField.ExhaustiveFields.baseExhaustive.get(c) == -1 && ExhaustiveField.ExhaustiveFields.exhaustive.get(c) == -1;
     }
 
     @Override
