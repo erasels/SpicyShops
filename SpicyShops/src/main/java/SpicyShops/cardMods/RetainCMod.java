@@ -25,8 +25,13 @@ public class RetainCMod extends AbstractSpicySaleCMod{
     public String modifyDescription(String rawDescription, AbstractCard card) {
         if(!CommonKeywordIconsField.useIcons.get(card)) {
             if (card.isInnate) {
-                String beforeNL = rawDescription.substring(0, NumberUtils.max(rawDescription.indexOf("NL"), 0));
-                return beforeNL + "NL " + HelperClass.capitalize(GameDictionary.RETAIN.NAMES[0]) + SPACE + LocalizedStrings.PERIOD + " " + rawDescription.substring(rawDescription.indexOf("NL"));
+                //Is innate in the bottom half of the card? Then don't care about trying to slot retain under it
+                if(rawDescription.indexOf(GameDictionary.INNATE.NAMES[0]) > (rawDescription.length()/2f)) {
+                    return HelperClass.capitalize(GameDictionary.RETAIN.NAMES[0]) + SPACE + LocalizedStrings.PERIOD + " NL " + rawDescription;
+                } else {
+                    String beforeNL = rawDescription.substring(0, NumberUtils.max(rawDescription.indexOf("NL"), 0));
+                    return beforeNL + "NL " + HelperClass.capitalize(GameDictionary.RETAIN.NAMES[0]) + SPACE + LocalizedStrings.PERIOD + " " + rawDescription.substring(rawDescription.indexOf("NL"));
+                }
             } else {
                 return HelperClass.capitalize(GameDictionary.RETAIN.NAMES[0]) + SPACE + LocalizedStrings.PERIOD + " NL " + rawDescription;
             }
