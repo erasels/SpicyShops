@@ -12,7 +12,7 @@ import com.megacrit.cardcrawl.localization.LocalizedStrings;
 
 public class RepeatCMod extends AbstractSpicySaleCMod{
     public static final String ID = SpicyShops.getModID()+"Repeat";
-    public static String localizedPurgeName = CommonKeywordIconsPatches.purgeName;
+    public static String localizedPurgeName;
 
     private boolean removedExhaust = false;
 
@@ -23,6 +23,13 @@ public class RepeatCMod extends AbstractSpicySaleCMod{
 
     @Override
     public void onInitialApplication(AbstractCard card) {
+        if(localizedPurgeName == null || localizedPurgeName.equals("")) {
+            if(CommonKeywordIconsPatches.purgeName.equals("")) {
+                localizedPurgeName = HelperClass.capitalize("purge");
+            } else {
+                localizedPurgeName = HelperClass.capitalizeAfterColon(CommonKeywordIconsPatches.purgeName);
+            }
+        }
         RepeatKeywordPatches.RepeatField.repeat.set(card, true);
         if(card.exhaust) {
             card.exhaust = false;
@@ -39,9 +46,9 @@ public class RepeatCMod extends AbstractSpicySaleCMod{
         String tmp = rawDescription;
         if(!CommonKeywordIconsField.useIcons.get(card) && card.type != AbstractCard.CardType.POWER) {
             if(removedExhaust) {
-                tmp = rawDescription.replace(HelperClass.capitalize(GameDictionary.EXHAUST.NAMES[0]), HelperClass.capitalize(localizedPurgeName));
+                tmp = rawDescription.replace(HelperClass.capitalize(GameDictionary.EXHAUST.NAMES[0]), localizedPurgeName);
             } else {
-                tmp = rawDescription + " NL " + HelperClass.capitalize(localizedPurgeName) + SPACE + LocalizedStrings.PERIOD;
+                tmp = rawDescription + " NL " + localizedPurgeName + SPACE + LocalizedStrings.PERIOD;
             }
         }
         String rK = SpicyShops.modKeywords.get("spicyshops:repeat").NAMES[0];
